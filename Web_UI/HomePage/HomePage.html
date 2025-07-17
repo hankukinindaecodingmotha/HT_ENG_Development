@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>HT</title>
+
+  <!-- 외부 CSS 연결 -->
+  <link rel="stylesheet" href="HomePageStyle.css" />
+
+  <!-- 외부 JavaScript 연결 -->
+  <script defer src="HomePageFunction.js"></script>
+</head>
+
+<body>
+  <!-- 좌측 버튼 및 로고 영역 -->
+  <div class="left-controls">
+    <!-- 사이드바 열기 버튼 -->
+    <button id="toggleBtn" class="toggle-btn" aria-label="사이드바 열기">☰</button>
+
+    <!-- 로고 이미지 -->
+    <img src="Image/HT_ENG.png" alt="회사 로고" class="logo" />
+  </div>
+
+  <!-- 사이드바 닫기 버튼 -->
+  <button id="closeBtn" class="close-btn" aria-label="사이드바 닫기" style="display: none;">×</button>
+
+  <!-- 사이드바 메뉴 -->
+  <nav class="sidebar" id="sidebar">
+    <!-- 회사 소개 섹션 -->
+    <h2 class="menu-title">회사 소개</h2>
+    <div class="menu-group">
+      <div class="menu-header">소개</div>
+      <ul>
+        <li><a href="company-ceo.html">CEO 소개</a></li>
+        <li><a href="company-members.html">회사 구성원 소개</a></li>
+        <li><a href="company-values.html">회사 가치 소개</a></li>
+        <li><a href="company.html">회사 소개 페이지</a></li>
+      </ul>
+    </div>
+
+    <!-- 브랜드 섹션 -->
+    <h2 class="menu-title">브랜드</h2>
+    <div class="menu-group">
+      <div class="menu-header">브랜드 목록</div>
+      <ul>
+        <li><a href="brand1.html">브랜드 1</a></li>
+        <li><a href="brand2.html">브랜드 2</a></li>
+        <li><a href="brand3.html">브랜드 3</a></li>
+        <li><a href="brand4.html">브랜드 4</a></li>
+      </ul>
+    </div>
+
+    <!-- 멤버쉽 섹션 -->
+    <h2 class="menu-title">멤버쉽</h2>
+    <div class="menu-group">
+      <div class="menu-header">회원 안내</div>
+      <ul>
+        <li><a href="membership.html">멤버쉽</a></li>
+        <li><a href="membership-benefits.html">혜택 안내</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main class="content">
+    <!-- 상단 네비게이션 -->
+    <header class="top-bar">
+      <div class="nav-links">
+        <a href="#">홈</a>
+        <a href="#">로그인</a>
+        <a href="#">문의</a>
+        <img src="search-icon.png" alt="검색" class="search-icon" />
+      </div>
+    </header>
+
+    <!-- 이미지 배너 + 브랜드 목록 -->
+    <section class="image-section">
+      <!-- 배너 이미지 -->
+      <div class="banner-image">
+        <img src="Image/회사 배너.png" alt="HTeng 사진" />
+      </div>
+
+      <!-- 브랜드 목록 -->
+      <div class="brands">
+        <a href="https://www.se.com/kr/ko/" target="_blank" class="brand-box">
+          <img src="Image/슈나이더.png" alt="슈나이더" />
+        </a>
+        <a href="https://www.pizzato.com" target="_blank" class="brand-box">
+          <img src="Image/피자토.png" alt="피자토" />
+        </a>
+        <a href="https://www.eaton.com/kr/ko-kr.html" target="_blank" class="brand-box">
+          <img src="Image/이튼.png" alt="이튼" />
+        </a>
+        <a href="https://www.legrand.co.kr/ko" target="_blank" class="brand-box">
+          <img src="Image/르그랑.png" alt="르그랑" />
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>

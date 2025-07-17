@@ -1,0 +1,209 @@
+/* 
+  body 전체 스타일 설정
+  - 기본 여백(margin)과 패딩 제거하여 화면 꽉 채움
+  - 배경색 흰색으로 설정
+  - 기본 글꼴은 Arial, sans-serif 계열
+  - 화면 전체를 flex 박스로 만들어 중앙 정렬 (수평, 수직)
+  - 뷰포트 높이 100vh를 설정하여 화면 꽉 채우기
+*/
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff; /* 배경 흰색 */
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center;     /* 수직 중앙 정렬 */
+  height: 100vh;           /* 화면 전체 높이 */
+}
+
+/* 
+  .container 클래스: 메인 컨텐츠 박스 스타일
+  - 최대 너비 900px, 화면 크기에 따라 90% 너비로 조정
+  - 배경색 흰색
+  - 내부 여백 60px로 넉넉하게 설정
+  - 박스 크기 계산 시 패딩 포함 (box-sizing)
+*/
+.container {
+  max-width: 900px;
+  width: 90%;
+  background: white;
+  padding: 60px;
+  box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+/* 
+  상단바 스타일 .top-bar
+  - flex 박스로 내부 아이템을 좌우 양 끝에 배치
+  - 세로 중앙 정렬
+*/
+.top-bar {
+  display: flex;
+  justify-content: space-between; /* 좌우 끝 정렬 */
+  align-items: center;            /* 세로 중앙 정렬 */
+}
+
+/* 
+  .full-button 클래스 (상단 우측 버튼)
+  - 패딩으로 클릭 영역 확보
+  - 연한 회색 배경 (#ddd)
+  - 테두리 제거 (border: none)
+  - 기본 글꼴 크기 1rem
+  - 마우스 커서가 손가락 모양으로 변경 (클릭 가능 표시)
+*/
+.full-button {
+  padding: 10px 16px;
+  background-color: #ddd;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* 
+  .logo 영역: 로고 이미지가 들어가는 컨테이너
+  - flex 박스로 내부 아이템 가로/세로 중앙 정렬
+  - 위쪽 마진 40px로 위치 조절
+*/
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+/* 
+  .logo 내 img 태그 스타일
+  - 높이 60px로 고정
+  - 너비는 자동으로 비율 유지하며 조정
+  - 이미지 비율을 유지하면서 영역에 맞게 맞춤 (object-fit)
+*/
+.logo img {
+  height: 60px;
+  width: auto;
+  object-fit: contain; /* 이미지 비율 유지하며 영역에 맞춤 */
+}
+
+/* 
+  .search-box: 검색창 박스 스타일
+  - flex 박스로 가로 정렬 및 가운데 정렬
+  - 위쪽 마진 40px, 좌우 자동 마진으로 수평 중앙 배치
+  - 너비 80%, 최대 너비 600px 제한
+  - 하단에 2px 회색 선 (border-bottom)으로 구분선 생성
+  - 아래쪽 패딩 14px로 내용과 선 사이 여백 확보
+  - position: relative로 내부에 절대위치 요소 사용 가능하게 함
+*/
+.search-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto 0;
+  width: 80%;
+  max-width: 600px;
+  border-bottom: 2px solid #888;
+  padding-bottom: 14px;
+  position: relative; /* 자식 요소 위치 기준 */
+}
+
+/* 
+  .search-box 내 아이콘 (돋보기) 스타일
+  - 글꼴 아이콘 크기 26px
+  - 회색 색상
+  - 오른쪽에 12px 여백 추가
+*/
+.search-box i {
+  font-size: 26px;
+  color: gray;
+  margin-right: 12px;
+}
+
+/* 
+  검색 input 스타일
+  - 테두리 제거 (border:none)
+  - 너비 100%로 박스 꽉 채움
+  - 글자 크기 1.2rem로 키움
+  - 텍스트 색상 짙은 회색(#333)
+  - 포커스 시 기본 아웃라인 제거 (outline:none)
+*/
+.search-box input {
+  border: none;
+  width: 100%;
+  font-size: 1.2rem;
+  color: #333;
+  outline: none;
+}
+
+/* 
+  #suggestions : 연관검색어 박스
+  - 검색창 바로 아래에 위치하도록 절대 위치 지정
+  - 좌우는 부모에 맞게 0으로 늘림
+  - 흰 배경, 연한 회색 테두리
+  - 최대 높이 180px, 내용 넘치면 스크롤
+  - z-index 10으로 최근검색어 박스보다 위에 표시
+  - 기본은 숨김 (display:none)
+*/
+#suggestions {
+  position: absolute;
+  top: 100%;  /* 부모(검색창) 바로 아래 */
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 180px;
+  overflow-y: auto; /* 넘칠 때 세로 스크롤 */
+  z-index: 10;       /* 최근검색어보다 위에 표시 */
+  display: none;     /* 기본 숨김 */
+}
+
+/* 
+  #suggestions 내 각 항목 div 스타일
+  - 안쪽 여백 8px 12px
+  - 마우스 커서 포인터로 변경 (클릭 가능 표시)
+*/
+#suggestions div {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* 
+  마우스 오버 시 배경 연한 회색으로 변경
+*/
+#suggestions div:hover {
+  background-color: #eee;
+}
+
+/* 
+  #recentSearches : 최근검색어 박스 (위치와 기본 스타일 #suggestions와 동일)
+  - z-index는 9로 연관검색어 박스보다 아래
+  - 기본 숨김
+*/
+#recentSearches {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 9;
+  display: none;
+}
+
+/* 
+  최근검색어 리스트 각 항목 li 스타일
+  - 패딩 8px 12px
+  - 마우스 커서 포인터로 변경
+  - 기본 리스트 점 스타일 제거 (list-style:none)
+*/
+#recentList li {
+  padding: 8px 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+/* 
+  최근검색어 항목 마우스 오버 시 배경 연한 회색 변경
+*/
+#recentList li:hover {
+  background-color: #eee;
+}
