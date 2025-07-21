@@ -1,140 +1,212 @@
-/* 전체 요소에 여백 제거 및 박스 크기 설정 */
+/* 초기화 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* 바디 기본 스타일 설정 */
 body {
-    display: flex;
-    flex-direction: column;
-    font-family: 'Arial', sans-serif;
+    font-family: "Arial", sans-serif;
     background-color: #fdfdfd;
-    height: 100vh;
 }
 
-/* 왼쪽에서 숨겨져 있다가 열리는 사이드바 */
-.sidebar {
+/* 상단 바 */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-bottom: 2px solid #4caf50;
+    background: white;
     position: fixed;
     top: 0;
     left: 0;
-    width: 260px;
-    height: 100%;
-    background: #fff;
-    padding: 60px 20px 20px 20px;
-    transform: translateX(-100%);
-    /* 초기엔 왼쪽 밖에 숨겨짐 */
-    transition: transform 0.3s ease;
-    z-index: 1000;
+    width: 100%;
+    z-index: 1300;
+    height: 60px;
 }
 
-/* 사이드바가 열렸을 때 위치 복구 */
-.sidebar.open {
-    transform: translateX(0);
-}
-
-/* 사이드바 열기 버튼 스타일 */
-.toggle-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    font-size: 22px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 1500;
-}
-
-/* 사이드바 닫기 버튼 스타일 */
-.close-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    font-size: 22px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 1500;
-}
-
-/* 중앙에 위치한 로고 */
-.logo {
-    position: fixed;
-    top: 30px;
-    left: 700px;
-    height: 40px;
-    transform: translateY(-50%);
-}
-
-/* 메인 콘텐츠 영역 */
-.content {
+/* 로고 왼쪽 고정 */
+.top-bar-left {
     flex: 1;
-    margin-top: 60px;
-    padding-left: 20px;
-    padding-right: 20px;
 }
 
-/* 상단 네비게이션 바 */
-.top-bar {
+.logo {
+    height: 40px;
+    cursor: pointer;
+}
+
+/* 메뉴 가운데 배치 */
+.top-bar-center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.main-menu {
+    list-style: none;
+    display: flex;
+    gap: 50px;
+}
+
+.menu-item {
+    position: relative;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    user-select: none;
+    color: #222;
+    width: 100px;
+    text-align: center;
+    padding: 6px 0;
+    /* 높이 확보 */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 커서 올리면 배경 사각형 효과 */
+.menu-item:hover {
+    background-color: #e0f2e9;
+    /* 연한 초록 배경 */
+    border-radius: 6px;
+    /* 둥근 모서리 */
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+    /* 연한 초록 그림자 */
+}
+
+/* 기존 서브메뉴 숨김 (필요시 삭제해도 됨) */
+.submenu {
+    display: none;
+}
+
+/* 오른쪽 메뉴 */
+.top-bar-right {
+    flex: 1;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 2px solid #4caf50;
-    background: white;
-}
-
-/* 네비게이션 링크 */
-.nav-links {
-    display: flex;
     gap: 20px;
+    font-size: 0.9rem;
     align-items: center;
 }
 
-/* 링크 스타일 */
-.nav-links a {
-    text-decoration: none;
+.top-bar-right a {
     color: #222;
-    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-/* 검색 아이콘 크기 */
+.top-bar-right a:hover {
+    color: #4caf50;
+}
+
+/* 검색 아이콘 */
 .search-icon {
-    width: 18px;
-    height: 18px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #333;
 }
 
-/* 배너 및 브랜드 전체 섹션 */
+/* 메가 메뉴 오버레이 */
+.mega-menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-top: 3px solid #4caf50;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+    z-index: 1400;
+    display: flex;
+    justify-content: center;
+    padding: 0 50px;
+}
+
+.mega-menu.active {
+    max-height: 400px;
+    opacity: 1;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/* 메가 메뉴 콘텐츠 */
+.mega-menu-content {
+    display: none;
+    max-width: 1100px;
+    width: 100%;
+    gap: 40px;
+    align-items: center;
+}
+
+.mega-menu-content.active {
+    display: flex;
+}
+
+.mega-column {
+    flex: 1;
+}
+
+.mega-column h3 {
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.mega-column ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.mega-column ul li {
+    margin-bottom: 12px;
+}
+
+.mega-column ul li a {
+    color: #555;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.mega-column ul li a:hover {
+    color: #4caf50;
+}
+
+.mega-column img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 배너 */
+.banner-fullscreen {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    margin-top: 60px;
+}
+
+.banner-fullscreen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 브랜드 섹션 */
 .image-section {
-    padding: 40px 0;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 40px;
 }
 
-/* 배너 이미지 영역 */
-.banner-image {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-}
-
-/* 배너 이미지 스타일 */
-.banner-image img {
-    width: 100%;
-    max-width: 1112px;
-    border-radius: 8px;
-}
-
-/* 브랜드 박스 영역 (가로 스크롤) */
 .brands {
     display: flex;
     gap: 20px;
@@ -142,7 +214,6 @@ body {
     padding: 10px 0;
 }
 
-/* 개별 브랜드 박스 */
 .brand-box {
     background: #fff;
     width: 263px;
@@ -153,12 +224,109 @@ body {
     align-items: center;
     justify-content: center;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-/* 브랜드 이미지 */
+.brand-box:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.brand-box:nth-child(2) {
+    transition-delay: 0.3s;
+}
+
+.brand-box:nth-child(3) {
+    transition-delay: 0.5s;
+}
+
+.brand-box:nth-child(4) {
+    transition-delay: 0.7s;
+}
+
 .brand-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
+}
+
+.brand-box.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Contact 섹션 */
+.contact-section {
+    padding: 60px 20px;
+    background: #f0f0f0;
+}
+
+.contact-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.section-divider {
+    width: 60px;
+    height: 4px;
+    background-color: #4caf50;
+    margin: 0 auto 40px;
+    border: none;
+}
+
+.contact-content {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.company-image {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.contact-info {
+    max-width: 400px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* 상세 설명 섹션 */
+.description-section {
+    padding: 60px 20px;
+    background: #fff;
+}
+
+.desc-block {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.desc-block img {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.desc-block p {
+    max-width: 600px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* 푸터 */
+.footer {
+    background: #222;
+    color: #fff;
+    padding: 30px 20px;
+    text-align: center;
+    font-size: 0.9rem;
 }

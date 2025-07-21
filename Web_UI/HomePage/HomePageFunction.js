@@ -1,20 +1,48 @@
-// HTML 요소가 모두 로드된 후 실행
 document.addEventListener("DOMContentLoaded", function () {
-    const sidebar = document.getElementById("sidebar");
-    const toggleBtn = document.getElementById("toggleBtn");
-    const closeBtn = document.getElementById("closeBtn");
+    // 브랜드 박스 애니메이션(스크롤에 따라)
+    const boxes = document.querySelectorAll(".brand-box");
 
-    // 사이드바 열기 버튼 클릭 시
-    toggleBtn.addEventListener("click", function () {
-        sidebar.classList.add("open");         // 사이드바 열기
-        toggleBtn.style.display = "none";      // 열기 버튼 숨김
-        closeBtn.style.display = "inline";     // 닫기 버튼 표시
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                const box = entry.target;
+                if (entry.isIntersecting) {
+                    box.classList.add("show");
+                } else {
+                    box.classList.remove("show");
+                }
+            });
+        },
+        {
+            threshold: 0.4,
+        }
+    );
+
+    boxes.forEach((box) => observer.observe(box));
+
+    // 메가 메뉴 제어
+    const menuItems = document.querySelectorAll(".menu-item");
+    const megaMenu = document.getElementById("megaMenu");
+    const megaContents = document.querySelectorAll(".mega-menu-content");
+
+    menuItems.forEach(item => {
+        item.addEventListener("mouseenter", () => {
+            const menu = item.getAttribute("data-menu");
+
+            megaMenu.classList.add("active");
+
+            megaContents.forEach(content => {
+                content.classList.remove("active");
+            });
+
+            const activeContent = document.querySelector(`.mega-menu-content[data-menu="${menu}"]`);
+            if (activeContent) activeContent.classList.add("active");
+        });
     });
 
-    // 사이드바 닫기 버튼 클릭 시
-    closeBtn.addEventListener("click", function () {
-        sidebar.classList.remove("open");      // 사이드바 닫기
-        toggleBtn.style.display = "inline";    // 열기 버튼 다시 보이기
-        closeBtn.style.display = "none";       // 닫기 버튼 숨김
+    // 상단바 영역 밖으로 마우스 나가면 메가 메뉴 닫기
+    document.querySelector(".top-bar").addEventListener("mouseleave", () => {
+        megaMenu.classList.remove("active");
+        megaContents.forEach(content => content.classList.remove("active"));
     });
 });
