@@ -125,7 +125,7 @@ input.addEventListener('input', function () {
 });
 
 // 검색창에서 엔터키 입력 시 실행 이벤트
-input.addEventListener('keydown', function(event) {
+input.addEventListener('keydown', function (event) {
   // 엔터키일 경우만 처리
   if (event.key === "Enter") {
     // 입력값 양쪽 공백 제거
@@ -169,5 +169,5 @@ input.addEventListener('blur', () => {
 document.getElementById('homeBtn').addEventListener('click', () => {
   // 상대 경로로 HomePage.html로 이동
   // 현재 SearchPage 폴더 안이므로 ../Homepage/ 경로 사용
-  window.location.href = '../Homepage/HomePage.html';
+  window.location.href = '../Homepage/HT-eng-HomePage.html';
 });
