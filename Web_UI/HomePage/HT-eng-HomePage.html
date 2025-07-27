@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>HT</title>
-  <link rel="stylesheet" href="HomePageStyle.css" />
-  <link rel="stylesheet" href="../Components/Header/header.css" />
+  <link rel="stylesheet" href="HT_eng-HomePageStyle.css" />
+  <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script defer src="HomePageFunction.js"></script>
+  <script defer src="HT_eng-HomePageFunction.js"></script>
 </head>
 
 <body>
@@ -103,12 +103,12 @@
 
   <!-- header.html을 불러온 후 header.js 기능 실행 -->
   <script>
-    fetch('../Components/header/header.html')
+    fetch('../Components/Header/HT_eng-header.html')
       .then(response => response.text())
       .then(html => {
         document.getElementById('header-container').innerHTML = html;
         const script = document.createElement('script');
-        script.src = '../Components/header/header.js';
+        script.src = '../Components/Header/HT_eng-header.js';
         document.body.appendChild(script);
       })
       .catch(err => console.error('헤더 로딩 실패:', err));

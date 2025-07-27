@@ -1,0 +1,72 @@
+/* 전체 요소 초기화 */
+* {
+    margin: 0;
+    /* 기본 마진 제거 */
+    padding: 0;
+    /* 기본 패딩 제거 */
+    box-sizing: border-box;
+    /* 박스 크기 계산 방식 통일 */
+}
+
+/* 기본 설정 */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    padding-top: 200px;
+    /* 헤더 공간 확보 */
+}
+
+/* 제목 */
+.employee-section h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #4caf50;
+}
+
+/* 직원 리스트 그리드 */
+.employee-list {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto 60px;
+}
+
+/* 직원 카드 */
+.employee-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 280px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.employee-card:hover {
+    transform: translateY(-10px);
+}
+
+/* 직원 사진 */
+.employee-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+/* 직원 이름 */
+.employee-card h3 {
+    margin: 10px 0 5px;
+    color: #222;
+}
+
+/* 직원 정보 */
+.employee-card p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+}
