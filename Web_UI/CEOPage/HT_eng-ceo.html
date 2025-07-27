@@ -5,8 +5,8 @@
     <meta charset="UTF-8" />
     <title>HT ENG - CEO 인사말</title>
     <link rel="stylesheet" href="HT_eng-Ceo.css" />
-    <link rel="stylesheet" href="../Components/header/header.css" />
-    <script defer src="../Components/header/header.js"></script>
+    <link rel="stylesheet" href="../Components/header/HT_eng-header.css" />
+    <script defer src="../Components/header/HT_eng-header.js"></script>
 </head>
 
 <body>
@@ -33,12 +33,12 @@
 
     <!-- ✅ header.html 동적 삽입 스크립트 추가 -->
     <script>
-        fetch('../Components/header/header.html')
+        fetch('../Components/header/HT-eng-header.html')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('header-container').innerHTML = html;
                 const script = document.createElement('script');
-                script.src = '../Components/header/header.js';
+                script.src = '../Components/header/HT-eng-header.js';
                 document.body.appendChild(script);
             })
             .catch(err => console.error('헤더 로딩 실패:', err));
