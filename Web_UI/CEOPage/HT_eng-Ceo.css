@@ -1,0 +1,83 @@
+/* ✅ 전체 초기화 */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+/* 기본 설정 */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* ✅ 상단 바 */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #4caf50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 28px;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+/* ✅ 헤더 아래 내용이 가려지지 않도록 padding 확보 */
+.ceo-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 200px 30px 60px;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+/* 사진 영역 */
+.ceo-image img {
+    width: 300px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 인사말 텍스트 */
+.ceo-message {
+    max-width: 600px;
+    flex: 1;
+}
+
+.ceo-message h2 {
+    font-size: 36px;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+.ceo-message p {
+    font-size: 18px;
+    line-height: 1.8;
+    word-break: keep-all;
+}
+
+.signature {
+    margin-top: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #4caf50;
+}
