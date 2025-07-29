@@ -37,6 +37,17 @@
 
         </div>
     </main>
+    <script>
+        fetch('/Web_UI/Components/Header/HT_eng-header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+                const script = document.createElement('script');
+                script.src = '../Components/Header/HT_eng-header.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('헤더 로딩 실패:', err));
+    </script>
 </body>
 
 </html>
