@@ -1,0 +1,50 @@
+/* 전체 요소 초기화 */
+* {
+    margin: 0;
+    /* 기본 마진 제거 */
+    padding: 0;
+    /* 기본 패딩 제거 */
+    box-sizing: border-box;
+    /* 박스 크기 계산 방식 통일 */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding-top: 80px;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #6EB550;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+h2 {
+    border-bottom: 2px solid #6EB550;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+
+footer {
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.9em;
+}

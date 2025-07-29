@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>HT ENG - 직원 소개</title>
+    <link rel="stylesheet" href="../Components/header/HT_eng-header.css" />
+    <link rel="stylesheet" href="HT_eng-members.css" />
+    <script defer src="../Components/header/HT_eng-header.js"></script>
+</head>
+
+<body>
+    <!-- 공통 헤더 삽입 -->
+    <div id="header-container"></div>
+
+    <main class="employee-section">
+        <h1>직원 소개</h1>
+
+        <div class="employee-list">
+            <!-- 직원 1 -->
+            <div class="employee-card">
+                <img src="/Web_UI/Assesets/Image/CEO.jpeg" alt="김철수 사진" />
+                <h3>민과장</h3>
+                <p>직책: 과장</p>
+                <p>경력: 3년</p>
+                <p>이메일: chulsoo@hteng.com</p>
+            </div>
+
+            <!-- 직원 2 -->
+            <div class="employee-card">
+                <img src="/Web_UI/Assesets/Image/CEO.jpeg" alt="이영희 사진" />
+                <h3>정태주</h3>
+                <p>직책: 기술팀</p>
+                <p>경력: 1년</p>
+                <p>이메일: younghee@hteng.com</p>
+            </div>
+
+        </div>
+    </main>
+    <script>
+        fetch('/Web_UI/Components/Header/HT_eng-header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+                const script = document.createElement('script');
+                script.src = '../Components/Header/HT_eng-header.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('헤더 로딩 실패:', err));
+    </script>
+</body>
+
+</html>

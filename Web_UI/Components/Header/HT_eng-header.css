@@ -9,7 +9,7 @@ body {
 
 /* body 또는 main에 헤더 높이만큼 padding 추가 (필요시 main 또는 body에 적용 가능) */
 body {
-    padding-top: 40px;
+    padding-top: 0px;
     /* .top-bar 높이와 동일 */
 }
 

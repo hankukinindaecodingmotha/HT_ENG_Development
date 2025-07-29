@@ -1,7 +1,7 @@
 // header.js
 
 // header.html을 가져와 삽입하고 나서 이벤트 바인딩을 수행
-fetch('../Components/header/header.html')
+fetch('../Components/Header/HT_eng-header.html')
     .then(response => response.text())
     .then(html => {
         document.getElementById('header-container').innerHTML = html;
