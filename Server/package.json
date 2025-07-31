@@ -1,0 +1,16 @@
+{
+    "name": "eocr-server",
+    "version": "1.0.0",
+    "description": "EOCR 제품 정보를 제공하는 Node.js 서버",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "csv-parser": "^3.2.0",
+        "express": "^4.21.2",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^4.6.3"
+    }
+}
