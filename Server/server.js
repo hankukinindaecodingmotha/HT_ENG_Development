@@ -260,6 +260,41 @@ app.get('/api/products/filter', (req, res) => {
     res.json(filtered);
 });
 
+/**
+ * @swagger
+ * /api/products/suggest:
+ *   get:
+ *     summary: 연관 검색어(제품명) 자동완성
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: 검색어 일부
+ *     responses:
+ *       200:
+ *         description: 연관 검색어 목록
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ */
+app.get('/api/products/suggest', (req, res) => {
+    const { q } = req.query;
+    if (!q || q.trim() === '') return res.json([]);
+    // 제품명 중에서 입력값이 포함된 것만, 중복 없이 최대 10개 추천
+    const suggestions = Array.from(
+        new Set(
+            eocrProducts
+                .map(p => p.제품)
+                .filter(name => name && name.toLowerCase().includes(q.toLowerCase()))
+        )
+    ).slice(0, 10);
+    res.json(suggestions);
+});
+
 app.listen(PORT, () => {
     console.log(`서버가 실행 중입니다! http://localhost:${PORT}`);
     console.log(`Swagger 문서: http://localhost:${PORT}/api-docs`);
