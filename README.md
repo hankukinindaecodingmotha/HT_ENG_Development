@@ -5,7 +5,7 @@
 ---
 
 ## 📌 HT-ENG 서비스 구축 계획서  
-**iOS 개발자: 정태주**
+**UI & Server Developer: 정태주**
 
 ---
 
