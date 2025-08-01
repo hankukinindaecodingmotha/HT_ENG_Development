@@ -26,9 +26,137 @@ const relatedWords = [
 // 최근 검색어 저장 배열 (최대 5개까지 저장)
 let recentSearches = [];
 
-// 검색어 필터링 함수
-// 입력된 필터(문자열)를 소문자로 비교해
-// li 요소 각각의 텍스트에 포함되면 보이고, 아니면 숨김 처리
+// 현재 뷰 모드
+let currentViewMode = 'grid-4';
+
+// 서버 검색 함수
+function performSearch() {
+  const query = input.value.trim();
+
+  if (!query) {
+    alert('검색어를 입력해주세요.');
+    return;
+  }
+
+  // 최근 검색어에 추가
+  updateRecentSearches(query);
+
+  // 서버 API 호출
+  fetch(`http://localhost:3000/api/products/filter?제품명=${encodeURIComponent(query)}`)
+    .then(res => res.json())
+    .then(data => {
+      displayServerResults(data);
+    })
+    .catch(error => {
+      console.error('서버 검색 오류:', error);
+      alert('서버 연결에 실패했습니다. 서버가 실행 중인지 확인해주세요.');
+    });
+
+  // 연관검색어 박스 숨기기
+  suggestions.style.display = 'none';
+}
+
+// 서버 검색 결과 표시 함수
+function displayServerResults(data) {
+  const resultGrid = document.getElementById('serverResultGrid');
+  const resultContainer = document.getElementById('serverResultContainer');
+
+  resultGrid.innerHTML = '';
+
+  if (data.length === 0) {
+    resultGrid.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+    resultContainer.classList.add('show');
+    return;
+  }
+
+  data.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.onclick = () => showProductDetail(item);
+
+    // 제품 이미지 (실제 이미지가 없으므로 플레이스홀더)
+    const imageDiv = document.createElement('div');
+    imageDiv.className = 'product-image';
+    imageDiv.textContent = item.제품.charAt(0);
+
+    // 제품 정보
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'product-info';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'product-name';
+    nameDiv.textContent = item.제품;
+
+    const descDiv = document.createElement('div');
+    descDiv.className = 'product-description';
+    descDiv.textContent = item.상세설명;
+
+    infoDiv.appendChild(nameDiv);
+    infoDiv.appendChild(descDiv);
+
+    card.appendChild(imageDiv);
+    card.appendChild(infoDiv);
+
+    resultGrid.appendChild(card);
+  });
+
+  resultContainer.classList.add('show');
+}
+
+// 제품 상세 정보 표시
+function showProductDetail(item) {
+  alert(`${item.제품}\n\n${item.상세설명}\n\nAC/DC: ${item['AC or DC']}\n제품군: ${item.제품군}\n보호종류: ${item.보호종류}`);
+}
+
+// 뷰 모드 설정
+function setViewMode(mode) {
+  currentViewMode = mode;
+  const resultGrid = document.getElementById('serverResultGrid');
+  const viewBtns = document.querySelectorAll('.view-btn');
+
+  // 클래스 업데이트
+  resultGrid.className = `result-grid ${mode}`;
+
+  // 버튼 활성화 상태 업데이트
+  viewBtns.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick').includes(mode)) {
+      btn.classList.add('active');
+    }
+  });
+}
+
+// 연관 검색어 표시 (서버 기반)
+function showSuggestions() {
+  const value = input.value.trim();
+
+  if (!value) {
+    suggestions.style.display = 'none';
+    return;
+  }
+
+  fetch(`http://localhost:3000/api/products/suggest?q=${encodeURIComponent(value)}`)
+    .then(res => res.json())
+    .then(suggestions => {
+      if (suggestions.length === 0) {
+        document.getElementById('suggestions').style.display = 'none';
+        return;
+      }
+      document.getElementById('suggestions').innerHTML = suggestions.map(s => `<div onclick="selectSuggestion('${s}')">${s}</div>`).join('');
+      document.getElementById('suggestions').style.display = 'block';
+    })
+    .catch(error => {
+      console.error('연관 검색어 오류:', error);
+      document.getElementById('suggestions').style.display = 'none';
+    });
+}
+
+function selectSuggestion(value) {
+  document.getElementById('searchInput').value = value;
+  performSearch();
+}
+
+// 검색어 필터링 함수 (기존 로컬 검색용)
 function filterItems(filter) {
   for (let i = 0; i < items.length; i++) {
     const text = items[i].textContent.toLowerCase();
@@ -62,8 +190,8 @@ function updateRecentSearches(keyword) {
     item.addEventListener("click", () => {
       // 클릭된 li 텍스트를 입력창 값으로 세팅
       input.value = item.textContent;
-      // 필터링 함수 실행
-      filterItems(input.value.toLowerCase());
+      // 서버 검색 실행
+      performSearch();
       // 최근 검색어 박스 숨김
       recentBox.style.display = "none";
     });
@@ -75,7 +203,7 @@ input.addEventListener('input', function () {
   // 입력된 값을 소문자와 양 끝 공백 제거해서 filter 변수에 저장
   const filter = input.value.toLowerCase().trim();
 
-  // li 필터링 실행
+  // li 필터링 실행 (기존 로컬 검색)
   filterItems(filter);
 
   // 입력값이 비었을 때 처리
@@ -95,32 +223,8 @@ input.addEventListener('input', function () {
     // 최근검색어 박스 보이기 (검색중에도 보이도록)
     recentBox.style.display = "block";
 
-    // 연관검색어 배열에서 입력값이 포함된 단어만 필터링해서 최대 5개까지 추림
-    const filteredSuggestions = relatedWords
-      .filter(word => word.toLowerCase().includes(filter))
-      .slice(0, 5);
-
-    // 필터링 결과가 있으면 연관검색어 박스에 div 요소로 표시하고 보이게 처리
-    if (filteredSuggestions.length > 0) {
-      suggestions.innerHTML = filteredSuggestions.map(word => `<div>${word}</div>`).join("");
-      suggestions.style.display = "block";
-    } else { // 없으면 박스 숨기고 내용 비움
-      suggestions.style.display = "none";
-      suggestions.innerHTML = "";
-    }
-
-    // 연관검색어 div 각각에 클릭 이벤트 등록
-    suggestions.querySelectorAll('div').forEach(item => {
-      item.addEventListener('click', () => {
-        // 클릭 시 해당 텍스트를 입력창 값으로 세팅하고
-        input.value = item.textContent;
-        // 필터링 실행
-        filterItems(input.value.toLowerCase());
-        // 연관검색어 박스 숨기고 내용 비움
-        suggestions.innerHTML = "";
-        suggestions.style.display = "none";
-      });
-    });
+    // 서버 기반 연관 검색어 표시
+    showSuggestions();
   }
 });
 
@@ -132,13 +236,8 @@ input.addEventListener('keydown', function (event) {
     const keyword = input.value.trim();
     // 빈값이 아니면
     if (keyword !== "") {
-      // 최근 검색어 목록 업데이트 (UI 포함)
-      updateRecentSearches(keyword);
-      // 연관검색어 박스 숨김 및 내용 초기화
-      suggestions.innerHTML = "";
-      suggestions.style.display = "none";
-      // 최근검색어 박스도 숨김
-      recentBox.style.display = "none";
+      // 서버 검색 실행
+      performSearch();
     }
   }
 });
