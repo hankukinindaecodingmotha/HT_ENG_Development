@@ -6,7 +6,7 @@
   <title>Search</title>
 
   <!-- 외부 CSS 파일 연결 -->
-  <link rel="stylesheet" href="HT_eng-SearchPageStyle.css" />
+  <link rel="stylesheet" href="HT_eng-SearchPageStyle1.css" />
 
   <!-- 폰트어썸 아이콘 CSS (돋보기 아이콘 등 사용 가능) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -35,7 +35,7 @@
         <img src="/Web_UI/Assesets/Image/HT_ENG.png" alt="로고" />
       </div>
 
-      <!-- 검색창 박스: 돋보기 아이콘 + 입력창 + 연관검색어, 최근검색어 박스 -->
+      <!-- 검색창 박스: 돋보기 아이콘 + 입력창 + 검색버튼 + 연관검색어, 최근검색어 박스 -->
       <div class="search-box">
 
         <!-- 돋보기 아이콘 (폰트어썸 아이콘 클래스) -->
@@ -44,6 +44,11 @@
         <!-- 검색 입력창 -->
         <input id="searchInput" type="text" placeholder="키워드를 입력하세요 Ex) AC, DC , Analog" autocomplete="off" />
 
+        <!-- 검색 버튼 -->
+        <button class="search-btn" onclick="performSearch()">
+          <i class="fas fa-search"></i>
+        </button>
+
         <!-- 연관검색어를 보여줄 박스, 기본적으로 숨김 처리됨 -->
         <div id="suggestions"></div>
 
@@ -51,6 +56,18 @@
         <div id="recentSearches">
           <ul id="recentList"></ul>
         </div>
+      </div>
+
+      <!-- 서버 검색 결과 영역 -->
+      <div class="server-result-container" id="serverResultContainer">
+        <div class="result-header">
+          <h3>서버 검색 결과</h3>
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="setViewMode('grid-4')">4열</button>
+            <button class="view-btn" onclick="setViewMode('grid-8')">8열</button>
+          </div>
+        </div>
+        <div id="serverResultGrid" class="result-grid grid-4"></div>
       </div>
     </div>
 
@@ -73,7 +90,7 @@
   </div>
 
   <!-- 검색 관련 자바스크립트 파일 연결 -->
-  <script src="HT_eng-SearchPage.js"></script>
+  <script src="HT_eng-SearchPage1.js"></script>
 </body>
 
 </html>
