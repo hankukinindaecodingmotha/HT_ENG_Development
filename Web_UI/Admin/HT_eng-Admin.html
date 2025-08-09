@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" href="HT_eng-Admin.css" />
+  <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- 고정 헤더 높이 보정: header.css의 body padding-top:0을 덮어씀 -->
+  <style>
+    body {
+      padding-top: 100px
+    }
+  </style>
+  <script defer src="../Components/Header/HT_eng-header.js"></script>
+  <script defer src="HT_eng-Admin.js"></script>
+</head>
+
+<body>
+  <div id="header-container"></div>
+
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h1>관리자 대시보드</h1>
+      <div class="spacer"></div>
+      <div class="user-info">
+        <span id="adminName"></span>
+        <button id="logoutBtn">로그아웃</button>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">제품 총 개수</div>
+        <div class="card-value" id="totalProducts">-</div>
+      </div>
+      <div class="card">
+        <div class="card-title">서버 시간</div>
+        <div class="card-value" id="serverTime">-</div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

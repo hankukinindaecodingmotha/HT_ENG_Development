@@ -5,6 +5,9 @@ const fs = require('fs');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +16,18 @@ app.use(cors());
 app.use(express.json());
 
 let eocrProducts = [];
+let users = [
+    // 기본 관리자 계정 (비밀번호: admin1234)
+    // 실제 운영에서는 .env 기반으로 초기화하거나 DB 사용 권장
+    {
+        id: 'admin',
+        username: 'admin',
+        passwordHash: bcrypt.hashSync('admin1234', 10),
+        role: 'admin'
+    }
+];
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key-change-in-prod';
 
 // EOCR 데이터 로드 함수 (key 공백 제거)
 function loadEOCRData() {
@@ -63,6 +78,81 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// 인증 관련 미들웨어
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: '토큰이 없습니다.' });
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ message: '토큰이 유효하지 않습니다.' });
+        req.user = user;
+        next();
+    });
+}
+
+function requireAdmin(req, res, next) {
+    if (req.user?.role !== 'admin') {
+        return res.status(403).json({ message: '관리자 권한이 필요합니다.' });
+    }
+    next();
+}
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: 사용자 로그인
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: 로그인 성공(JWT 토큰 반환)
+ *       401:
+ *         description: 인증 실패
+ */
+app.post('/api/auth/login', (req, res) => {
+    const { username, password } = req.body || {};
+    const user = users.find(u => u.username === username);
+    if (!user) return res.status(401).json({ message: '잘못된 사용자 정보입니다.' });
+    const ok = bcrypt.compareSync(password, user.passwordHash);
+    if (!ok) return res.status(401).json({ message: '잘못된 사용자 정보입니다.' });
+
+    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '2h' });
+    res.json({ token, username: user.username, role: user.role });
+});
+
+/**
+ * @swagger
+ * /api/admin/summary:
+ *   get:
+ *     summary: 관리자 대시보드 요약 정보
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 요약 정보
+ *       401:
+ *         description: 토큰 누락
+ *       403:
+ *         description: 권한 부족
+ */
+app.get('/api/admin/summary', authenticateToken, requireAdmin, (req, res) => {
+    res.json({
+        totalProducts: eocrProducts.length,
+        serverTime: new Date().toISOString(),
+        admin: req.user.username
+    });
+});
 
 /**
  * @swagger
