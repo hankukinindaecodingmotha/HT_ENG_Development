@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>내 프로필</title>
+    <link rel="stylesheet" href="HT_eng-Profile.css" />
+    <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            padding-top: 100px
+        }
+    </style>
+    <script defer src="../Components/Header/HT_eng-header.js"></script>
+    <script defer src="HT_eng-Profile.js"></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <main class="profile-wrap">
+        <section class="profile-card">
+            <div class="avatar" id="avatar">U</div>
+            <div class="info">
+                <h1 id="displayName">사용자</h1>
+                <div class="meta">
+                    <span id="roleBadge" class="badge">USER</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>계정 정보</h2>
+            <div class="kv">
+                <div class="k">아이디</div>
+                <div class="v" id="kvUsername">-</div>
+            </div>
+            <div class="kv">
+                <div class="k">권한</div>
+                <div class="v" id="kvRole">-</div>
+            </div>
+        </section>
+
+        <section class="section actions">
+            <button id="homeBtn" class="btn"><i class="fa-solid fa-house"></i> 홈으로</button>
+            <button id="searchBtn" class="btn"><i class="fa-solid fa-magnifying-glass"></i> 검색</button>
+            <button id="adminBtn" class="btn btn-outline" style="display:none;"><i class="fa-solid fa-gauge-high"></i>
+                관리자 페이지</button>
+            <div class="spacer"></div>
+            <button id="logoutBtn" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> 로그아웃</button>
+        </section>
+    </main>
+</body>
+
+</html>

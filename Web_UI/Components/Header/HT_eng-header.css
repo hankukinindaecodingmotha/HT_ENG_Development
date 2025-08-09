@@ -254,3 +254,58 @@ body {
     object-fit: cover;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
+
+/* =========================
+   로그인 → 프로필 아이콘 전환 UI
+   ========================= */
+.avatar-btn {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.avatar-btn .fa-user {
+    font-size: 18px;
+}
+
+.profile-menu {
+    position: absolute;
+    right: 30px;
+    top: 80px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+    min-width: 180px;
+    padding: 8px;
+    display: none;
+    z-index: 2000;
+}
+
+.profile-menu.show {
+    display: block;
+}
+
+.profile-menu a,
+.profile-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: #333;
+}
+
+.profile-menu a:hover,
+.profile-menu button:hover {
+    background: #f6f8f7;
+}
