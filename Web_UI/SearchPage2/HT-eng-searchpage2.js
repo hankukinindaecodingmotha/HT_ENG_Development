@@ -1,3 +1,5 @@
+// Web_UI/SearchPage2/HT-eng-searchpage2.js
+
 // 현재 선택된 필터 상태
 const filters = {
     AC_DC: '모든 조건',
@@ -25,12 +27,10 @@ function toggleFilters() {
     const toggleIcon = document.getElementById('toggleIcon');
 
     if (filterArea.classList.contains('expanded')) {
-        // 접기
         filterArea.classList.remove('expanded');
         toggleText.textContent = '필터 보기';
         toggleIcon.style.transform = 'rotate(0deg)';
     } else {
-        // 펼치기
         filterArea.classList.add('expanded');
         toggleText.textContent = '필터 숨기기';
         toggleIcon.style.transform = 'rotate(180deg)';
@@ -147,9 +147,11 @@ function displayResults(data) {
     });
 }
 
-// 제품 상세 정보 표시 (선택사항)
+// 제품 상세 페이지로 이동
 function showProductDetail(item) {
-    alert(`${item.제품}\n\n${item.상세설명}\n\nAC/DC: ${item['AC or DC']}\n제품군: ${item.제품군}\n보호종류: ${item.보호종류}`);
+    const name = item?.제품;
+    if (!name) return;
+    window.location.href = `../ProductPage/ProductDetailPage/HT_eng-ProductDetail.html?name=${encodeURIComponent(name)}`;
 }
 
 // 연관 검색어 표시

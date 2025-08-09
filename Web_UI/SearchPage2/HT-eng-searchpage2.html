@@ -1,3 +1,4 @@
+<!-- Web_UI/SearchPage2/HT-eng-searchpage2.html -->
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -5,9 +6,21 @@
     <meta charset="UTF-8" />
     <title>EOCR 제품 검색</title>
     <link rel="stylesheet" href="HT-eng-searchpage2.css" />
+    <!-- 헤더 CSS/아이콘 링크를 head에 명시 -->
+    <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- 고정 헤더가 컨텐츠를 가리지 않도록 여백 추가 -->
+    <style>
+        body {
+            padding-top: 100px;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- 상단 바 컴포넌트 주입 컨테이너 -->
+    <div id="header-container"></div>
+
     <!-- 네이버 스타일 검색 컨테이너 -->
     <div class="search-container">
         <!-- 로고 영역 -->
@@ -199,6 +212,9 @@
         <div id="resultGrid" class="result-grid grid-4"></div>
     </div>
 
+    <!-- 헤더 로더 스크립트 -->
+    <script defer src="../Components/Header/HT_eng-header.js"></script>
+    <!-- 검색페이지 스크립트 -->
     <script src="HT-eng-searchpage2.js"></script>
 </body>
 
