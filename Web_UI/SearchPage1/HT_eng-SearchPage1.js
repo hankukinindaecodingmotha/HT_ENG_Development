@@ -1,3 +1,5 @@
+// Web_UI/SearchPage1/HT_eng-SearchPage1.js
+
 // 검색 입력창 요소 선택
 const input = document.getElementById('searchInput');
 
@@ -103,9 +105,11 @@ function displayServerResults(data) {
   resultContainer.classList.add('show');
 }
 
-// 제품 상세 정보 표시
+// 제품 상세 페이지로 이동 (제품명 전달)
 function showProductDetail(item) {
-  alert(`${item.제품}\n\n${item.상세설명}\n\nAC/DC: ${item['AC or DC']}\n제품군: ${item.제품군}\n보호종류: ${item.보호종류}`);
+  const name = item?.제품;
+  if (!name) return;
+  window.location.href = `../ProductPage/ProductDetailPage/HT_eng-ProductDetail.html?name=${encodeURIComponent(name)}`;
 }
 
 // 뷰 모드 설정
@@ -266,7 +270,6 @@ input.addEventListener('blur', () => {
 // --- 홈 버튼 클릭 시 HomePage.html로 이동 --- //
 // 홈 버튼 id 'homeBtn' 선택 후 클릭 이벤트 리스너 추가
 document.getElementById('homeBtn').addEventListener('click', () => {
-  // 상대 경로로 HomePage.html로 이동
-  // 현재 SearchPage 폴더 안이므로 ../Homepage/ 경로 사용
-  window.location.href = '../Homepage/HT-eng-HomePage.html';
+  // SearchPage1 폴더 기준
+  window.location.href = '../HomePage/HT-eng-HomePage.html';
 });
