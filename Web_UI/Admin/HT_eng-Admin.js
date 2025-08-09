@@ -1,6 +1,6 @@
 function ensureAuth() {
-    const token = localStorage.getItem('auth_token');
-    const role = localStorage.getItem('auth_role');
+    const token = sessionStorage.getItem('auth_token');
+    const role = sessionStorage.getItem('auth_role');
     if (!token) {
         window.location.href = '../LoginPage/HT-eng-Login.html';
         return null;
@@ -22,7 +22,7 @@ async function loadSummary() {
         });
         if (!res.ok) {
             if (res.status === 401) {
-                localStorage.removeItem('auth_token');
+                sessionStorage.clear();
                 window.location.href = '../LoginPage/HT-eng-Login.html';
                 return;
             }
@@ -31,9 +31,11 @@ async function loadSummary() {
             return;
         }
         const data = await res.json();
-        document.getElementById('adminName').textContent = `${localStorage.getItem('auth_user')} (admin)`;
+        document.getElementById('adminName').textContent =
+            `${sessionStorage.getItem('auth_user')} (admin)`;
         document.getElementById('totalProducts').textContent = data.totalProducts;
-        document.getElementById('serverTime').textContent = new Date(data.serverTime).toLocaleString();
+        document.getElementById('serverTime').textContent =
+            new Date(data.serverTime).toLocaleString();
     } catch (e) {
         console.error(e);
         alert('서버 통신 오류');
@@ -42,12 +44,8 @@ async function loadSummary() {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
-        localStorage.removeItem('auth_role');
+        sessionStorage.clear();
         window.location.href = '../LoginPage/HT-eng-Login.html';
     });
     loadSummary();
 });
-
-

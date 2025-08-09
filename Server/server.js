@@ -18,31 +18,34 @@ app.use(express.json());
 let eocrProducts = [];
 let users = [
     // 기본 관리자 계정 (비밀번호: admin1234)
-    // 실제 운영에서는 .env 기반으로 초기화하거나 DB 사용 권장
     {
         id: 'admin',
         username: 'admin',
         passwordHash: bcrypt.hashSync('admin1234', 10),
         role: 'admin'
+    },
+    // 목데이터: 일반 사용자 (비밀번호: user1234)
+    {
+        id: 'user1',
+        username: 'user1',
+        passwordHash: bcrypt.hashSync('user1234', 10),
+        role: 'user'
     }
 ];
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key-change-in-prod';
 
-// EOCR 데이터 로드 함수 (key 공백 제거)
+// EOCR 데이터 로드
 function loadEOCRData() {
     const csvPath = path.join(__dirname, '../Resource/EOCR설정표.csv');
     fs.createReadStream(csvPath)
         .pipe(csv())
         .on('data', (row) => {
-            // 모든 key의 앞뒤 공백을 제거한 새 객체 생성
             const trimmedRow = {};
             Object.keys(row).forEach(key => {
                 const trimmedKey = key.trim();
                 trimmedRow[trimmedKey] = row[key];
             });
-
-            // '제품' 필드가 비어있지 않은 경우만 추가
             if (trimmedRow.제품 && trimmedRow.제품.trim() !== '') {
                 eocrProducts.push(trimmedRow);
             }
@@ -51,10 +54,9 @@ function loadEOCRData() {
             console.log('EOCR 데이터 로드 완료! 총 개수:', eocrProducts.length);
         });
 }
-
 loadEOCRData();
 
-// Swagger 설정
+// Swagger
 const swaggerDefinition = {
     openapi: '3.0.0',
     info: {
@@ -62,24 +64,13 @@ const swaggerDefinition = {
         version: '1.0.0',
         description: 'EOCR 제품 정보를 위한 API 문서입니다.',
     },
-    servers: [
-        {
-            url: 'http://localhost:3000',
-            description: '로컬 서버',
-        },
-    ],
+    servers: [{ url: 'http://localhost:3000', description: '로컬 서버' }],
 };
-
-const options = {
-    swaggerDefinition,
-    apis: ['./server.js'],
-};
-
+const options = { swaggerDefinition, apis: ['./server.js'] };
 const swaggerSpec = swaggerJSDoc(options);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// 인증 관련 미들웨어
+// 인증 미들웨어
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -90,7 +81,6 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
-
 function requireAdmin(req, res, next) {
     if (req.user?.role !== 'admin') {
         return res.status(403).json({ message: '관리자 권한이 필요합니다.' });
@@ -110,15 +100,11 @@ function requireAdmin(req, res, next) {
  *           schema:
  *             type: object
  *             properties:
- *               username:
- *                 type: string
- *               password:
- *                 type: string
+ *               username: { type: string }
+ *               password: { type: string }
  *     responses:
- *       200:
- *         description: 로그인 성공(JWT 토큰 반환)
- *       401:
- *         description: 인증 실패
+ *       200: { description: 로그인 성공 }
+ *       401: { description: 인증 실패 }
  */
 app.post('/api/auth/login', (req, res) => {
     const { username, password } = req.body || {};
@@ -127,7 +113,11 @@ app.post('/api/auth/login', (req, res) => {
     const ok = bcrypt.compareSync(password, user.passwordHash);
     if (!ok) return res.status(401).json({ message: '잘못된 사용자 정보입니다.' });
 
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '2h' });
+    const token = jwt.sign(
+        { id: user.id, username: user.username, role: user.role },
+        JWT_SECRET,
+        { expiresIn: '2h' }
+    );
     res.json({ token, username: user.username, role: user.role });
 });
 
@@ -136,15 +126,10 @@ app.post('/api/auth/login', (req, res) => {
  * /api/admin/summary:
  *   get:
  *     summary: 관리자 대시보드 요약 정보
- *     security:
- *       - bearerAuth: []
  *     responses:
- *       200:
- *         description: 요약 정보
- *       401:
- *         description: 토큰 누락
- *       403:
- *         description: 권한 부족
+ *       200: { description: 요약 정보 }
+ *       401: { description: 토큰 누락 }
+ *       403: { description: 권한 부족 }
  */
 app.get('/api/admin/summary', authenticateToken, requireAdmin, (req, res) => {
     res.json({
@@ -162,12 +147,6 @@ app.get('/api/admin/summary', authenticateToken, requireAdmin, (req, res) => {
  *     responses:
  *       200:
  *         description: 제품 목록
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
  */
 app.get('/api/products', (req, res) => {
     res.json(eocrProducts);
@@ -178,157 +157,12 @@ app.get('/api/products', (req, res) => {
  * /api/products/filter:
  *   get:
  *     summary: EOCR 제품 필터 검색
- *     description: 다양한 조건으로 EOCR 제품을 필터링합니다.
- *     parameters:
- *       - in: query
- *         name: 제품명
- *         schema:
- *           type: string
- *         description: 제품명
- *       - in: query
- *         name: 상세설명
- *         schema:
- *           type: string
- *         description: 제품 상세 설명
- *       - in: query
- *         name: AC_DC
- *         schema:
- *           type: string
- *           enum: [AC, DC, 모든 조건]
- *         description: AC / DC
- *       - in: query
- *         name: 제품군
- *         schema:
- *           type: string
- *           enum: [Analog, Digital, Accessory, 모든 조건]
- *         description: 제품군
- *       - in: query
- *         name: 보호종류
- *         schema:
- *           type: string
- *           enum: [전류, 전압, 모든 조건]
- *         description: 보호종류
- *       - in: query
- *         name: 통신여부
- *         schema:
- *           type: string
- *           enum: [비통신, 통신, 모든 조건]
- *         description: 통신여부
- *       - in: query
- *         name: 통신종류
- *         schema:
- *           type: string
- *           enum: [4-20mA, 불가, Modbus-RTU(RS485), Modbus-RTU(RS485)/4-20mA, Modbus-RTU(RS485)/TCP(Eternet)/4-20mA, 모든 조건]
- *         description: 통신종류
- *       - in: query
- *         name: 누설_지락
- *         schema:
- *           type: string
- *           enum: [가능, 불가능, 모든 조건]
- *         description: 누설(지락)
- *       - in: query
- *         name: 단락
- *         schema:
- *           type: string
- *           enum: [가능, 불가능, 모든 조건]
- *         description: 단락
- *       - in: query
- *         name: 과전류_저전류
- *         schema:
- *           type: string
- *           enum: [가능, 불가능, 모든 조건, 과전류, 저전류]
- *         description: 과전류 / 저전류
- *       - in: query
- *         name: 결상
- *         schema:
- *           type: string
- *           enum: [가능, 불가능, 모든 조건, X]
- *         description: 결상
- *       - in: query
- *         name: 역상
- *         schema:
- *           type: string
- *           enum: [가능, 불가능, 모든 조건, X]
- *         description: 역상
- *       - in: query
- *         name: 과전압_저전압
- *         schema:
- *           type: string
- *           enum: [과전압, 저전압, 가능, 불가능, 모든 조건]
- *         description: 과전압 / 저전압
- *       - in: query
- *         name: 전력
- *         schema:
- *           type: string
- *           enum: [가능, 불가, 모든 조건]
- *         description: 전력
- *       - in: query
- *         name: 내장_ZCT
- *         schema:
- *           type: string
- *           enum: [O, 모든 조건]
- *         description: 내장 ZCT
- *     responses:
- *       200:
- *         description: 필터링된 EOCR 제품 목록
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   제품명:
- *                     type: string
- *                   상세설명:
- *                     type: string
- *                   AC_DC:
- *                     type: string
- *                   제품군:
- *                     type: string
- *                   보호종류:
- *                     type: string
- *                   통신여부:
- *                     type: string
- *                   통신종류:
- *                     type: string
- *                   누설_지락:
- *                     type: string
- *                   단락:
- *                     type: string
- *                   과전류_저전류:
- *                     type: string
- *                   결상:
- *                     type: string
- *                   역상:
- *                     type: string
- *                   과전압_저전압:
- *                     type: string
- *                   전력:
- *                     type: string
- *                   내장_ZCT:
- *                     type: string
  */
 app.get('/api/products/filter', (req, res) => {
     let filtered = [...eocrProducts];
-
-    // 쿼리 파라미터로 필터링
     const {
-        제품명,
-        상세설명,
-        AC_DC,
-        제품군,
-        보호종류,
-        통신여부,
-        통신종류,
-        누설_지락,
-        단락,
-        과전류_저전류,
-        결상,
-        역상,
-        과전압_저전압,
-        전력,
-        내장_ZCT
+        제품명, 상세설명, AC_DC, 제품군, 보호종류, 통신여부, 통신종류,
+        누설_지락, 단락, 과전류_저전류, 결상, 역상, 과전압_저전압, 전력, 내장_ZCT
     } = req.query;
 
     if (제품명) filtered = filtered.filter(p => p.제품 && p.제품.includes(제품명));
@@ -355,26 +189,10 @@ app.get('/api/products/filter', (req, res) => {
  * /api/products/suggest:
  *   get:
  *     summary: 연관 검색어(제품명) 자동완성
- *     parameters:
- *       - in: query
- *         name: q
- *         schema:
- *           type: string
- *         description: 검색어 일부
- *     responses:
- *       200:
- *         description: 연관 검색어 목록
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: string
  */
 app.get('/api/products/suggest', (req, res) => {
     const { q } = req.query;
     if (!q || q.trim() === '') return res.json([]);
-    // 제품명 중에서 입력값이 포함된 것만, 중복 없이 최대 10개 추천
     const suggestions = Array.from(
         new Set(
             eocrProducts

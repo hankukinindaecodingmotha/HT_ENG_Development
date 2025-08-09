@@ -449,3 +449,16 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* 검색 영역을 아래로 내리기 */
+.center-content {
+  padding-top: 100px;
+  /* 필요에 따라 수치 조정 */
+}
+
+/* 모바일에서 간격 조정 */
+@media (max-width: 768px) {
+  .center-content {
+    padding-top: 70px;
+  }
+}

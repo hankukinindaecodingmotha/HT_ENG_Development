@@ -78,3 +78,16 @@ body {
     height: 14px;
     align-self: center;
 }
+
+/* 로그인 박스를 더 아래로 */
+.login-container {
+    margin-top: 140px;
+    /* 필요에 따라 수치 조정 */
+}
+
+/* 모바일에서 간격 조정 */
+@media (max-width: 768px) {
+    .login-container {
+        margin-top: 100px;
+    }
+}
