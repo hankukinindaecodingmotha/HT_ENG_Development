@@ -2,55 +2,157 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>내 프로필</title>
-    <link rel="stylesheet" href="HT_eng-Profile.css" />
-    <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <style>
-        body {
-            padding-top: 100px
-        }
-    </style>
-    <script defer src="../Components/Header/HT_eng-header.js"></script>
-    <script defer src="HT_eng-Profile.js"></script>
+  <meta charset="UTF-8" />
+  <title>내 프로필 - HTeng</title>
+  <link rel="stylesheet" href="/Web_UI/User/HT_eng-Profile.css" />
+  <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>body{padding-top:120px}</style>
 </head>
 
 <body>
-    <div id="header-container"></div>
+  <div id="header-container"></div>
 
-    <main class="profile-wrap">
-        <section class="profile-card">
-            <div class="avatar" id="avatar">U</div>
-            <div class="info">
-                <h1 id="displayName">사용자</h1>
-                <div class="meta">
-                    <span id="roleBadge" class="badge">USER</span>
-                </div>
-            </div>
-        </section>
+  <main class="profile-wrap">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="profile-info">
+        <h1 id="displayName">사용자명</h1>
+        <div class="role-badge" id="roleBadge">사용자</div>
+      </div>
+    </div>
 
-        <section class="section">
-            <h2>계정 정보</h2>
-            <div class="kv">
-                <div class="k">아이디</div>
-                <div class="v" id="kvUsername">-</div>
-            </div>
-            <div class="kv">
-                <div class="k">권한</div>
-                <div class="v" id="kvRole">-</div>
-            </div>
-        </section>
+    <section class="profile-details">
+      <div class="section-header">
+        <h2>계정 정보</h2>
+        <button class="edit-btn" id="editBtn">
+          <i class="fas fa-edit"></i>
+          수정
+        </button>
+      </div>
 
-        <section class="section actions">
-            <button id="homeBtn" class="btn"><i class="fa-solid fa-house"></i> 홈으로</button>
-            <button id="searchBtn" class="btn"><i class="fa-solid fa-magnifying-glass"></i> 검색</button>
-            <button id="adminBtn" class="btn btn-outline" style="display:none;"><i class="fa-solid fa-gauge-high"></i>
-                관리자 페이지</button>
-            <div class="spacer"></div>
-            <button id="logoutBtn" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> 로그아웃</button>
-        </section>
-    </main>
+      <div class="info-grid" id="infoGrid">
+        <div class="info-item">
+          <span class="info-label">아이디</span>
+          <span class="info-value" id="username">user123</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">이메일</span>
+          <span class="info-value" id="email">user@example.com</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">가입일</span>
+          <span class="info-value" id="joinDate">2024-01-01</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">마지막 로그인</span>
+          <span class="info-value" id="lastLogin">2024-01-15</span>
+        </div>
+      </div>
+
+      <!-- 수정 폼 (기본적으로 숨김) -->
+      <form class="edit-form" id="editForm" style="display: none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editDisplayName">표시명</label>
+            <input type="text" id="editDisplayName" name="displayName" required>
+          </div>
+          <div class="form-group">
+            <label for="editEmail">이메일</label>
+            <input type="email" id="editEmail" name="email" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editPassword">새 비밀번호</label>
+            <input type="password" id="editPassword" name="password" placeholder="변경하지 않으려면 비워두세요">
+          </div>
+          <div class="form-group">
+            <label for="editPasswordConfirm">새 비밀번호 확인</label>
+            <input type="password" id="editPasswordConfirm" name="passwordConfirm" placeholder="새 비밀번호를 다시 입력하세요">
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="save-btn">
+            <i class="fas fa-save"></i>
+            저장
+          </button>
+          <button type="button" class="cancel-btn" id="cancelBtn">
+            <i class="fas fa-times"></i>
+            취소
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="profile-actions">
+      <h2>빠른 액션</h2>
+      <div class="action-buttons">
+        <a href="../HomePage/HT-eng-HomePage.html" class="action-btn home-btn">
+          <i class="fas fa-home"></i>
+          홈으로
+        </a>
+        <a href="../SearchPage1/HT-eng-SearchPage.html" class="action-btn search-btn">
+          <i class="fas fa-search"></i>
+          제품 검색
+        </a>
+        <a href="../Support/HT_eng-support.html" class="action-btn support-btn">
+          <i class="fas fa-headset"></i>
+          기술지원
+        </a>
+        <button class="action-btn logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          로그아웃
+        </button>
+      </div>
+    </section>
+
+    <!-- 관리자인 경우 추가 액션 -->
+    <section class="admin-actions" id="adminActions" style="display: none;">
+      <h2>관리자 기능</h2>
+      <div class="action-buttons">
+        <a href="../Admin/HT_eng-Admin.html" class="action-btn admin-btn">
+          <i class="fas fa-cog"></i>
+          관리자 페이지
+        </a>
+        <a href="../Admin/HT_eng-Admin.html" class="action-btn users-btn">
+          <i class="fas fa-users"></i>
+          사용자 관리
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- 비밀번호 확인 모달 -->
+  <div class="modal" id="passwordModal">
+    <div class="modal-content">
+      <h3>비밀번호 확인</h3>
+      <p>정보 수정을 위해 비밀번호를 입력해주세요.</p>
+      <form id="passwordForm">
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="confirm-btn">
+            <i class="fas fa-check"></i>
+            확인
+          </button>
+          <button type="button" class="cancel-btn" id="modalCancelBtn">
+            <i class="fas fa-times"></i>
+            취소
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script defer src="../Components/Header/HT_eng-header.js"></script>
+  <script defer src="HT_eng-Profile.js"></script>
 </body>
 
 </html>
