@@ -3,44 +3,577 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>관리자 대시보드</title>
+  <title>관리자 페이지 - HTeng</title>
   <link rel="stylesheet" href="HT_eng-Admin.css" />
   <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- 고정 헤더 높이 보정: header.css의 body padding-top:0을 덮어씀 -->
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- 분리된 JavaScript 파일들 -->
+  <script src="admin-core.js"></script>
+  <script src="admin-users.js"></script>
+  <script src="admin-company.js"></script>
+  <script src="admin-ceo.js"></script>
+  <script src="admin-members.js"></script>
+  <script src="admin-intro-pages.js"></script>
   <style>
     body {
-      padding-top: 100px
+      padding-top: 120px
     }
   </style>
-  <script defer src="../Components/Header/HT_eng-header.js"></script>
-  <script defer src="HT_eng-Admin.js"></script>
 </head>
 
 <body>
   <div id="header-container"></div>
 
-  <div class="admin-wrap">
-    <div class="admin-header">
-      <h1>관리자 대시보드</h1>
-      <div class="spacer"></div>
-      <div class="user-info">
-        <span id="adminName"></span>
-        <button id="logoutBtn">로그아웃</button>
+  <main class="admin-wrap">
+    <div class="admin-hero">
+      <h1>관리자 페이지</h1>
+      <p>HTeng 시스템 관리</p>
+    </div>
+
+    <section class="admin-stats">
+      <h2>시스템 현황</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-users"></i>
+          <div class="stat-info">
+            <span class="stat-number" id="totalUsers">0</span>
+            <span class="stat-label">전체 사용자</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-user-check"></i>
+          <div class="stat-info">
+            <span class="stat-number" id="activeUsers">0</span>
+            <span class="stat-label">활성 사용자</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-clock"></i>
+          <div class="stat-info">
+            <span class="stat-number" id="pendingUsers">0</span>
+            <span class="stat-label">승인 대기</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-database"></i>
+          <div class="stat-info">
+            <span class="stat-number" id="totalProducts">0</span>
+            <span class="stat-label">등록 제품</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-actions">
+      <h2>관리 기능</h2>
+      <div class="action-grid">
+        <div class="action-card" onclick="showUserManagement()">
+          <i class="fas fa-user-cog"></i>
+          <h3>사용자 관리</h3>
+          <p>계정 생성, 수정, 삭제</p>
+        </div>
+        <div class="action-card" onclick="showContentManagement()">
+          <i class="fas fa-edit"></i>
+          <h3>콘텐츠 관리</h3>
+          <p>페이지 정보 수정</p>
+        </div>
+        <div class="action-card" onclick="showSystemSettings()">
+          <i class="fas fa-cogs"></i>
+          <h3>시스템 설정</h3>
+          <p>시스템 환경 설정</p>
+        </div>
+        <div class="action-card" onclick="showLogs()">
+          <i class="fas fa-list-alt"></i>
+          <h3>시스템 로그</h3>
+          <p>사용자 활동 기록</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 사용자 관리 섹션 -->
+    <section class="user-management" id="userManagement" style="display: none;">
+      <div class="section-header">
+        <h2>사용자 관리</h2>
+        <button class="add-user-btn" onclick="showAddUserForm()">
+          <i class="fas fa-user-plus"></i>
+          새 사용자 추가
+        </button>
+      </div>
+
+      <div class="user-list" id="userList">
+        <!-- 사용자 목록이 여기에 동적으로 로드됩니다 -->
+        <div class="user-list-header">
+          <span class="username">아이디</span>
+          <span class="display-name">표시명</span>
+          <span class="role">권한</span>
+          <span class="status">상태</span>
+          <span class="email">이메일</span>
+          <span class="join-date">가입일</span>
+          <span class="actions">상태별 액션</span>
+          <span class="user-actions">사용자 관리</span>
+        </div>
+      </div>
+
+      <!-- 사용자 수정 섹션 (기본적으로 숨김) -->
+      <div class="user-edit-section" id="userEditSection" style="display: none;">
+        <div class="section-header">
+          <h3>사용자 정보 수정</h3>
+          <button class="close-edit-btn" onclick="hideUserEdit()">
+            <i class="fas fa-times"></i>
+            수정 취소
+          </button>
+        </div>
+
+        <form class="edit-user-form" id="editUserForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editUsername">아이디</label>
+              <input type="text" id="editUsername" name="username" readonly>
+            </div>
+            <div class="form-group">
+              <label for="editDisplayName">표시명 *</label>
+              <input type="text" id="editDisplayName" name="displayName" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editRole">권한 *</label>
+              <select id="editRole" name="role" required>
+                <option value="user">일반 사용자</option>
+                <option value="admin">관리자</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editStatus">상태 *</label>
+              <select id="editStatus" name="status" required>
+                <option value="active">활성</option>
+                <option value="pending">승인 대기</option>
+                <option value="inactive">비활성</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editEmail">이메일</label>
+              <input type="email" id="editEmail" name="email">
+            </div>
+            <div class="form-group">
+              <label for="editPassword">새 비밀번호</label>
+              <input type="password" id="editPassword" name="password" placeholder="변경하지 않으려면 비워두세요">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editPasswordConfirm">새 비밀번호 확인</label>
+            <input type="password" id="editPasswordConfirm" name="passwordConfirm" placeholder="새 비밀번호를 다시 입력하세요">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="save-btn">
+              <i class="fas fa-save"></i>
+              수정 완료
+            </button>
+            <button type="button" class="cancel-btn" onclick="hideUserEdit()">
+              <i class="fas fa-times"></i>
+              취소
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 새 사용자 추가 폼 -->
+    <div class="modal" id="addUserModal">
+      <div class="modal-content">
+        <h3>새 사용자 추가</h3>
+        <form id="addUserForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="newUsername">아이디 *</label>
+              <input type="text" id="newUsername" name="username" required>
+            </div>
+            <div class="form-group">
+              <label for="newDisplayName">표시명 *</label>
+              <input type="text" id="newDisplayName" name="displayName" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="newPassword">비밀번호 *</label>
+              <input type="password" id="newPassword" name="password" required>
+            </div>
+            <div class="form-group">
+              <label for="newRole">권한 *</label>
+              <select id="newRole" name="role" required>
+                <option value="">선택해주세요</option>
+                <option value="user">일반 사용자</option>
+                <option value="admin">관리자</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newEmail">이메일</label>
+            <input type="email" id="newEmail" name="email">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="save-btn">
+              <i class="fas fa-save"></i>
+              추가
+            </button>
+            <button type="button" class="cancel-btn" onclick="hideAddUserForm()">
+              <i class="fas fa-times"></i>
+              취소
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <div class="cards">
-      <div class="card">
-        <div class="card-title">제품 총 개수</div>
-        <div class="card-value" id="totalProducts">-</div>
+    <!-- 콘텐츠 관리 섹션 -->
+    <section class="content-management" id="contentManagement" style="display: none;">
+      <h2>콘텐츠 관리</h2>
+      <div class="content-tabs">
+        <button class="tab-btn active" onclick="showTab('company')">메인페이지 관리</button>
+        <button class="tab-btn" onclick="showTab('intro-pages')">소개 페이지 관리</button>
+        <button class="tab-btn" onclick="showTab('products')">제품 페이지 관리</button>
+        <button class="tab-btn" onclick="showTab('membership')">멤버십 페이지 관리</button>
       </div>
-      <div class="card">
-        <div class="card-title">서버 시간</div>
-        <div class="card-value" id="serverTime">-</div>
+
+      <div class="tab-content" id="companyTab">
+        <h3>메인페이지 관리</h3>
+        <p class="tab-description">메인페이지와 연락처 정보를 관리할 수 있습니다.</p>
+
+        <form id="companyForm">
+          <!-- 회사 기본 정보 섹션 -->
+          <div class="section-group">
+            <h4><i class="fas fa-building"></i> 회사 기본 정보</h4>
+            <div class="form-group">
+              <label for="companyName">회사명</label>
+              <input type="text" id="companyName" name="companyName" value="HTENG">
+            </div>
+            <div class="form-group">
+              <label for="companyDesc">회사 설명</label>
+              <textarea id="companyDesc" name="companyDesc"
+                rows="4">HTENG는 전기·전자 부품 유통 및 기술 지원 서비스를 제공하는 전문 기업입니다. 고객과의 신뢰를 바탕으로 지속적인 성장과 혁신을 추구합니다.</textarea>
+            </div>
+            <div class="form-group">
+              <label for="companyBusiness">사업 분야</label>
+              <textarea id="companyBusiness" name="companyBusiness"
+                rows="3">산업 자동화 제품 유통, 전기 부품 판매, 현장 기술 컨설팅 및 유지보수</textarea>
+            </div>
+            <div class="form-group">
+              <label for="companyLocation">주소</label>
+              <input type="text" id="companyLocation" name="companyLocation" value="경기도 김포시 태장로 795번길 23 마스터비즈파크 340호">
+            </div>
+          </div>
+
+          <!-- 연락처 정보 섹션 -->
+          <div class="section-group">
+            <h4><i class="fas fa-phone"></i> 연락처 정보</h4>
+            <div class="form-group">
+              <label for="companyPhone">전화번호</label>
+              <input type="tel" id="companyPhone" name="companyPhone" value="031-123-4567">
+            </div>
+            <div class="form-group">
+              <label for="companyEmail">이메일</label>
+              <input type="email" id="companyEmail" name="companyEmail" value="info@hteng.com">
+            </div>
+            <div class="form-group">
+              <label for="companyFax">팩스번호</label>
+              <input type="tel" id="companyFax" name="companyFax" value="031-123-4568">
+            </div>
+            <div class="form-group">
+              <label for="companyWebsite">웹사이트</label>
+              <input type="url" id="companyWebsite" name="companyWebsite" value="https://www.hteng.com">
+            </div>
+            <div class="form-group">
+              <label for="companyHours">영업시간</label>
+              <input type="text" id="companyHours" name="companyHours" value="월-금 09:00-18:00">
+            </div>
+          </div>
+
+          <!-- 회사 소개 페이지 섹션 -->
+          <div class="section-group">
+            <h4><i class="fas fa-info-circle"></i> 회사 소개 페이지</h4>
+            <div class="form-group">
+              <label for="introTitle">페이지 제목</label>
+              <input type="text" id="introTitle" name="introTitle" value="회사 소개">
+            </div>
+            <div class="form-group">
+              <label for="introSubtitle">페이지 부제목</label>
+              <input type="text" id="introSubtitle" name="introSubtitle" value="HTeng이 추구하는 핵심 가치입니다">
+            </div>
+            <div class="form-group">
+              <label for="companyDescription">회사 소개 내용</label>
+              <textarea id="companyDescription" name="companyDescription"
+                rows="4">HTENG는 전기·전자 부품 유통 및 기술 지원 서비스를 제공하는 전문 기업입니다. 고객과의 신뢰를 바탕으로 지속적인 성장과 혁신을 추구합니다.</textarea>
+            </div>
+          </div>
+
+          <!-- 연혁 섹션 -->
+          <div class="section-group">
+            <h4><i class="fas fa-history"></i> 회사 연혁</h4>
+            <div id="historyList">
+              <div class="history-item" data-index="0">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>연도</label>
+                    <input type="text" name="historyYear_0" value="2025">
+                  </div>
+                  <div class="form-group">
+                    <label>내용</label>
+                    <input type="text" name="historyEvent_0" value="웹 리뉴얼 및 온라인 기술 지원 시작">
+                  </div>
+                  <button type="button" class="remove-history-btn" onclick="removeHistory(0)" title="제거">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="history-item" data-index="1">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>연도</label>
+                    <input type="text" name="historyYear_1" value="2020">
+                  </div>
+                  <div class="form-group">
+                    <label>내용</label>
+                    <input type="text" name="historyEvent_1" value="이튼·르그랑 공식 파트너 체결">
+                  </div>
+                  <button type="button" class="remove-history-btn" onclick="removeHistory(1)" title="제거">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="history-item" data-index="2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>연도</label>
+                    <input type="text" name="historyYear_2" value="2010">
+                  </div>
+                  <div class="form-group">
+                    <label>내용</label>
+                    <input type="text" name="historyEvent_2" value="HTENG 설립">
+                  </div>
+                  <button type="button" class="remove-history-btn" onclick="removeHistory(2)" title="제거">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="add-history-btn" onclick="addHistory()">
+              <i class="fas fa-plus"></i> 연혁 추가
+            </button>
+          </div>
+
+          <!-- 사업 분야 상세 섹션 -->
+          <div class="section-group">
+            <h4><i class="fas fa-briefcase"></i> 사업 분야 상세</h4>
+            <div id="businessList">
+              <div class="business-item" data-index="0">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>사업 항목</label>
+                    <input type="text" name="businessItem_0" value="산업 자동화 제품 유통">
+                  </div>
+                  <button type="button" class="remove-business-btn" onclick="removeBusiness(0)" title="제거">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="business-item" data-index="1">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>사업 항목</label>
+                    <input type="text" name="businessItem_1" value="전기 부품 판매">
+                  </div>
+                  <button type="button" class="remove-business-btn" onclick="removeBusiness(1)" title="제거">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="business-item" data-index="2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>사업 항목</label>
+                    <input type="text" name="businessItem_2" value="현장 기술 컨설팅 및 유지보수">
+                  </div>
+                  <button type="button" class="remove-business-btn" onclick="removeBusiness(2)" title="제거">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="add-business-btn" onclick="addBusiness()">
+              <i class="fas fa-plus"></i> 사업 항목 추가
+            </button>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="save-btn">
+              <i class="fas fa-save"></i> 저장
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
-  </div>
+
+
+
+
+
+      <div class="tab-content" id="intro-pages" style="display: none;">
+        <h3>소개 페이지 관리</h3>
+        <p class="tab-description">각 소개 페이지의 내용을 수정하고 관리할 수 있습니다.</p>
+
+        <div class="intro-pages-grid">
+          <!-- CEO 소개 페이지 관리 -->
+          <div class="intro-page-card">
+            <div class="page-header">
+              <h4><i class="fas fa-user-tie"></i> CEO 소개 페이지</h4>
+              <button class="edit-page-btn" onclick="editIntroPage('ceo')">
+                <i class="fas fa-edit"></i> 수정
+              </button>
+            </div>
+            <div class="page-preview">
+              <p><strong>현재 CEO:</strong> <span id="ceoPreviewName">홍길동</span></p>
+              <p><strong>직책:</strong> <span id="ceoPreviewPosition">대표이사</span></p>
+              <p><strong>이미지:</strong> <span id="ceoPreviewImage">CEO.jpeg</span></p>
+            </div>
+          </div>
+
+          <!-- 회사 구성원 소개 페이지 관리 -->
+          <div class="intro-page-card">
+            <div class="page-header">
+              <h4><i class="fas fa-users"></i> 회사 구성원 소개 페이지</h4>
+              <button class="edit-page-btn" onclick="editIntroPage('members')">
+                <i class="fas fa-edit"></i> 수정
+              </button>
+            </div>
+            <div class="page-preview">
+              <p><strong>현재 구성원 수:</strong> <span id="membersPreviewCount">2명</span></p>
+              <p><strong>페이지 제목:</strong> <span id="membersPreviewTitle">직원 소개</span></p>
+            </div>
+          </div>
+
+          <!-- 회사 소개 페이지 관리 -->
+          <div class="intro-page-card">
+            <div class="page-header">
+              <h4><i class="fas fa-building"></i> 회사 소개 페이지</h4>
+              <button class="edit-page-btn" onclick="editIntroPage('company')">
+                <i class="fas fa-edit"></i> 수정
+              </button>
+            </div>
+            <div class="page-preview">
+              <p><strong>페이지 제목:</strong> <span id="companyIntroPreviewTitle">회사 소개</span></p>
+              <p><strong>페이지 부제목:</strong> <span id="companyIntroPreviewSubtitle">HTeng이 추구하는...</span></p>
+              <p><strong>연혁 항목 수:</strong> <span id="companyIntroPreviewHistoryCount">3개</span></p>
+              <p><strong>사업 항목 수:</strong> <span id="companyIntroPreviewBusinessCount">3개</span></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 소개 페이지 수정 모달 -->
+        <div id="introPageModal" class="modal" style="display: none;">
+          <div class="modal-content intro-page-modal">
+            <div class="modal-header">
+              <h3 id="modalTitle">소개 페이지 수정</h3>
+              <button class="close-modal-btn" onclick="closeIntroPageModal()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="modalContent">
+                <!-- 동적으로 내용이 로드됩니다 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="productsTab" style="display: none;">
+        <h3>제품 페이지 관리</h3>
+        <p class="tab-description">제품 정보와 카탈로그를 관리할 수 있습니다.</p>
+
+        <div class="products-management">
+          <div class="section-group">
+            <h4><i class="fas fa-box"></i> 제품 카테고리</h4>
+            <div class="form-group">
+              <label for="productCategory">주요 제품 카테고리</label>
+              <input type="text" id="productCategory" name="productCategory" value="전기 부품, 자동화 시스템, 에너지 관리">
+            </div>
+          </div>
+
+          <div class="section-group">
+            <h4><i class="fas fa-star"></i> 주요 제품</h4>
+            <div class="form-group">
+              <label for="mainProducts">주요 제품 목록</label>
+              <textarea id="mainProducts" name="mainProducts" rows="4">EOCR, 전기 설비, 자동화 솔루션, 에너지 효율 시스템</textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="save-btn">
+              <i class="fas fa-save"></i> 저장
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="membershipTab" style="display: none;">
+        <h3>멤버십 페이지 관리</h3>
+        <p class="tab-description">멤버십 혜택과 등급 정보를 관리할 수 있습니다.</p>
+
+        <div class="membership-management">
+          <div class="section-group">
+            <h4><i class="fas fa-crown"></i> 멤버십 등급</h4>
+            <div class="form-group">
+              <label for="membershipLevels">멤버십 등급</label>
+              <input type="text" id="membershipLevels" name="membershipLevels" value="일반, 실버, 골드, 플래티넘">
+            </div>
+          </div>
+
+          <div class="section-group">
+            <h4><i class="fas fa-gift"></i> 멤버십 혜택</h4>
+            <div class="form-group">
+              <label for="membershipBenefits">멤버십 혜택</label>
+              <textarea id="membershipBenefits" name="membershipBenefits" rows="4">할인 혜택, 우선 주문, 기술 지원, 전용 상담</textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="save-btn">
+              <i class="fas fa-save"></i> 저장
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="../Components/Header/HT_eng-header.js"></script>
+  <script>
+    // 헤더 로드
+    document.addEventListener('DOMContentLoaded', function () {
+      // 헤더 컴포넌트가 자동으로 로드되도록 함
+      // HT_eng-header.js에서 자동으로 loadHeader() 함수를 실행
+
+      // 로그인 상태 확인
+      const token = sessionStorage.getItem('auth_token');
+      const role = sessionStorage.getItem('auth_role');
+
+      if (!token || role !== 'admin') {
+        alert('관리자 권한이 필요한 페이지입니다.');
+        window.location.href = '../LoginPage/HT-eng-Login.html';
+        return;
+      }
+    });
+  </script>
 </body>
 
 </html>

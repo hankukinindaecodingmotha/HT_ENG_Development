@@ -6,12 +6,25 @@ const storage = sessionStorage;
 
 // 현재 URL에서 /Web_UI 루트 경로 자동 계산
 function getWebRoot() {
-    const idx = location.pathname.indexOf('/Web_UI');
-    // http(s)로 서빙하는 경우
-    if (idx >= 0) return location.pathname.slice(0, idx) + '/Web_UI';
+    const pathname = location.pathname;
+
+    // /Admin, /User, /HomePage 등이 포함된 경우
+    if (pathname.includes('/Admin') || pathname.includes('/User') || pathname.includes('/HomePage')) {
+        const parts = pathname.split('/');
+        const webUIIndex = parts.findIndex(part => part === 'Web_UI');
+        if (webUIIndex >= 0) {
+            return parts.slice(0, webUIIndex + 1).join('/');
+        }
+    }
+
+    // 기본적으로 /Web_UI 찾기
+    const idx = pathname.indexOf('/Web_UI');
+    if (idx >= 0) return pathname.slice(0, idx) + '/Web_UI';
+
     // file:// 등 예외 시 기본값
     return '/Web_UI';
 }
+
 const WEB_ROOT = getWebRoot();
 
 // 헤더 CSS/아이콘이 없으면 자동 주입
@@ -40,13 +53,25 @@ function renderAuthUI() {
     const authArea = document.getElementById('authArea');
     if (!authArea) return;
 
-    const token = storage.getItem('auth_token');
-    const role = storage.getItem('auth_role') || 'user';
-    const username = storage.getItem('auth_user') || '사용자';
+    const token = sessionStorage.getItem('auth_token');
+    const role = sessionStorage.getItem('auth_role') || 'user';
+    const username = sessionStorage.getItem('auth_user') || '사용자';
 
     if (!token) {
         authArea.innerHTML = `<a href="${WEB_ROOT}/LoginPage/HT-eng-Login.html">로그인</a>`;
         return;
+    }
+
+    // 현재 페이지 경로에 따라 적절한 링크 생성
+    const currentPath = location.pathname;
+    let profileLink = '';
+
+    if (currentPath.includes('/Admin')) {
+        profileLink = `${WEB_ROOT}/Admin/HT_eng-Admin.html`;
+    } else if (currentPath.includes('/User')) {
+        profileLink = `${WEB_ROOT}/User/HT_eng-Profile.html`;
+    } else {
+        profileLink = role === 'admin' ? `${WEB_ROOT}/Admin/HT_eng-Admin.html` : `${WEB_ROOT}/User/HT_eng-Profile.html`;
     }
 
     authArea.innerHTML = `
@@ -54,9 +79,7 @@ function renderAuthUI() {
       <i class="fa-solid fa-user"></i>
     </button>
     <div class="profile-menu" id="profileMenu">
-      <a href="${role === 'admin'
-            ? `${WEB_ROOT}/Admin/HT_eng-Admin.html`
-            : `${WEB_ROOT}/User/HT_eng-Profile.html`}">
+      <a href="${profileLink}">
         ${role === 'admin' ? '관리자 페이지' : '내 페이지'}
       </a>
       <button id="logoutBtn">로그아웃 (${username})</button>
@@ -74,13 +97,13 @@ function renderAuthUI() {
     document.addEventListener('click', () => menu.classList.remove('show'));
 
     logoutBtn?.addEventListener('click', () => {
-        storage.clear();
+        sessionStorage.clear();
         window.location.href = `${WEB_ROOT}/LoginPage/HT-eng-Login.html`;
     });
 }
 
 // 헤더 로딩
-(function loadHeader() {
+function loadHeader() {
     ensureHeadAssets();
 
     const container = document.getElementById('header-container');
@@ -93,7 +116,9 @@ function renderAuthUI() {
             return res.text();
         })
         .then((html) => {
-            container.innerHTML = html;
+            // 경로를 현재 위치에 맞게 수정
+            const modifiedHtml = html.replace(/\.\.\//g, `${WEB_ROOT}/`);
+            container.innerHTML = modifiedHtml;
 
             // 메가메뉴 바인딩
             const menuItems = document.querySelectorAll('.menu-item');
@@ -130,4 +155,11 @@ function renderAuthUI() {
         </header>`;
             renderAuthUI();
         });
-})();
+}
+
+// 자동 실행 (페이지 로드 시)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadHeader);
+} else {
+    loadHeader();
+}

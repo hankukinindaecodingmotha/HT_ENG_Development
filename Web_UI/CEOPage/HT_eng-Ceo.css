@@ -20,64 +20,142 @@ body {
     color: #333;
 }
 
-/* ✅ 상단 바 */
-.top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #4caf50;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    font-size: 28px;
-    z-index: 1000;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
-}
-
-/* ✅ 헤더 아래 내용이 가려지지 않도록 padding 확보 */
-.ceo-section {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 200px 30px 60px;
-    gap: 60px;
+/* 컨테이너 */
+.container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* CEO 페이지 메인 */
+.ceo-page {
+    padding: 300px 0 60px;
+    height: auto;
+    overflow: visible;
+}
+
+/* CEO 콘텐츠 레이아웃 */
+.ceo-content {
+    display: flex;
+    align-items: center;
+    gap: 60px;
     flex-wrap: wrap;
 }
 
-/* 사진 영역 */
-.ceo-image img {
+/* CEO 이미지 섹션 */
+.ceo-image-section {
+    flex: 0 0 300px;
+}
+
+.ceo-image {
     width: 300px;
     height: auto;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* 인사말 텍스트 */
-.ceo-message {
-    max-width: 600px;
+/* CEO 텍스트 섹션 */
+.ceo-text-section {
     flex: 1;
+    min-width: 300px;
 }
 
-.ceo-message h2 {
+/* CEO 헤더 */
+.ceo-header {
+    margin-bottom: 30px;
+}
+
+.ceo-header h1 {
     font-size: 36px;
     color: #222;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    margin-top: 0;
 }
 
-.ceo-message p {
+.ceo-position {
+    font-size: 20px;
+    color: #666;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* CEO 메시지 */
+.ceo-message {
+    margin-top: 20px;
+}
+
+.ceo-introduction,
+.ceo-vision {
+    margin-bottom: 30px;
+}
+
+.ceo-introduction h3,
+.ceo-vision h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4caf50;
+    padding-bottom: 8px;
+}
+
+.ceo-introduction p,
+.ceo-vision p {
     font-size: 18px;
     line-height: 1.8;
     word-break: keep-all;
+    color: #555;
 }
 
-.signature {
-    margin-top: 30px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #4caf50;
+/* 로딩 메시지 스타일 */
+.loading-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.loading-message i {
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #dc3545;
+    font-size: 1.1rem;
+}
+
+.error-message i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .ceo-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .ceo-image-section {
+        flex: 0 0 auto;
+    }
+
+    .ceo-image {
+        width: 250px;
+    }
+
+    .ceo-header h1 {
+        font-size: 28px;
+    }
+
+    .ceo-position {
+        font-size: 18px;
+    }
 }
