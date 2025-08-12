@@ -4,72 +4,44 @@
 // 회사 정보 로드
 async function loadCompanyInfo() {
   try {
-    console.log('회사 정보 로드 시작...');
-    const response = await fetch('http://localhost:3000/api/admin/company', {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('auth_token')}`
-      }
-    });
+    const response = await fetch('http://localhost:3000/api/admin/company');
 
     if (response.ok) {
-      const companyInfo = await response.json();
-      console.log('로드된 회사 정보:', companyInfo);
+      const companyData = response.json();
 
-      // 기본 회사 정보 폼에 데이터 반영
-      const companyNameInput = document.getElementById('companyName');
-      const companyDescInput = document.getElementById('companyDesc');
-      const companyBusinessInput = document.getElementById('companyBusiness');
-      const companyLocationInput = document.getElementById('companyLocation');
+      // 기본 회사 정보
+      document.getElementById('companyName').value = companyData.name || '';
+      document.getElementById('companyDesc').value = companyData.description || '';
+      document.getElementById('companyBusiness').value = companyData.business || '';
+      document.getElementById('companyLocation').value = companyData.location || '';
 
-      if (companyNameInput) companyNameInput.value = companyInfo.name || '';
-      if (companyDescInput) companyDescInput.value = companyInfo.description || '';
-      if (companyBusinessInput) companyBusinessInput.value = companyInfo.business || '';
-      if (companyLocationInput) companyLocationInput.value = companyInfo.location || '';
+      // 연락처 정보
+      document.getElementById('companyPhone').value = companyData.phone || '';
+      document.getElementById('companyEmail').value = companyData.email || '';
+      document.getElementById('companyFax').value = companyData.fax || '';
+      document.getElementById('companyWebsite').value = companyData.website || '';
+      document.getElementById('companyHours').value = companyData.hours || '';
 
-      // 회사 소개 페이지 정보 폼에 데이터 반영
-      const introTitleInput = document.getElementById('introTitle');
-      const introSubtitleInput = document.getElementById('introSubtitle');
-      const companyDescriptionInput = document.getElementById('companyDescription');
+      // 지도 설정
+      document.getElementById('mapLat').value = companyData.mapLat || 37.637966;
+      document.getElementById('mapLng').value = companyData.mapLng || 126.680780;
+      document.getElementById('mapZoom').value = companyData.mapZoom || 18;
 
-      if (introTitleInput) introTitleInput.value = companyInfo.title || '회사 소개';
-      if (introSubtitleInput) introSubtitleInput.value = companyInfo.subtitle || 'HTeng이 추구하는 핵심 가치입니다';
-      if (companyDescriptionInput) companyDescriptionInput.value = companyInfo.description || '';
-
-      // 연락처 정보 폼에 데이터 반영
-      const companyPhoneInput = document.getElementById('companyPhone');
-      const companyEmailInput = document.getElementById('companyEmail');
-      const companyFaxInput = document.getElementById('companyFax');
-      const companyWebsiteInput = document.getElementById('companyWebsite');
-      const companyHoursInput = document.getElementById('companyHours');
-
-      if (companyPhoneInput) companyPhoneInput.value = companyInfo.phone || '02-1234-5678';
-      if (companyEmailInput) companyEmailInput.value = companyInfo.email || 'info@hteng.com';
-      if (companyFaxInput) companyFaxInput.value = companyInfo.fax || '02-1234-5679';
-      if (companyWebsiteInput) companyWebsiteInput.value = companyInfo.website || 'www.hteng.com';
-      if (companyHoursInput) companyHoursInput.value = companyInfo.hours || '09:00 - 18:00';
+      // 회사 소개 페이지 정보
+      document.getElementById('companyIntroTitle').value = companyData.title || '';
+      document.getElementById('companyIntroSubtitle').value = companyData.subtitle || '';
 
       // 연혁 정보 로드
-      if (companyInfo.history && companyInfo.history.length > 0) {
-        loadHistoryToForm(companyInfo.history);
-      } else {
-        setDefaultCompanyValues();
-      }
+      loadHistoryToForm(companyData.history || []);
 
-      // 사업 분야 상세 정보 로드
-      if (companyInfo.businessItems && companyInfo.businessItems.length > 0) {
-        loadBusinessToForm(companyInfo.businessItems);
-      } else {
-        setDefaultCompanyValues();
-      }
+      // 사업 항목 로드
+      loadBusinessToForm(companyData.businessItems || []);
 
-      console.log('회사 정보 폼 업데이트 완료');
     } else {
       console.error('회사 정보 로드 실패:', response.status);
-      setDefaultCompanyValues();
     }
   } catch (error) {
-    console.error('회사 정보 로드 실패:', error);
-    setDefaultCompanyValues();
+    console.error('회사 정보 로드 오류:', error);
   }
 }
 
@@ -102,87 +74,63 @@ function setDefaultCompanyValues() {
   }
 }
 
-// 회사 정보 업데이트 처리
+// 회사 정보 업데이트
 async function handleCompanyUpdate(e) {
   e.preventDefault();
-  
-  const submitBtn = e.target.querySelector('button[type="submit"]');
-  setButtonLoading(submitBtn, true);
+
+  const formData = new FormData(e.target);
+
+  // 기본 회사 정보
+  const companyData = {
+    name: formData.get('companyName'),
+    description: formData.get('companyDesc'),
+    business: formData.get('companyBusiness'),
+    location: formData.get('companyLocation'),
+
+    // 연락처 정보
+    phone: formData.get('companyPhone'),
+    email: formData.get('companyEmail'),
+    fax: formData.get('companyFax'),
+    website: formData.get('companyWebsite'),
+    hours: formData.get('companyHours'),
+
+    // 지도 설정
+    mapLat: parseFloat(formData.get('mapLat')),
+    mapLng: parseFloat(formData.get('mapLng')),
+    mapZoom: parseInt(formData.get('mapZoom')),
+
+    // 회사 소개 페이지 정보
+    title: formData.get('companyIntroTitle'),
+    subtitle: formData.get('companyIntroSubtitle'),
+
+    // 연혁 정보
+    history: getHistoryFromForm(),
+
+    // 사업 항목
+    businessItems: getBusinessFromForm()
+  };
 
   try {
-    const formData = new FormData(e.target);
-    
-    // 기본 회사 정보 수집
-    const companyData = {
-      name: formData.get('companyName'),
-      description: formData.get('companyDesc'),
-      business: formData.get('companyBusiness'),
-      location: formData.get('companyLocation'),
-      
-      // 회사 소개 페이지 정보
-      title: formData.get('introTitle'),
-      subtitle: formData.get('introSubtitle'),
-      
-      // 연락처 정보
-      phone: formData.get('companyPhone'),
-      email: formData.get('companyEmail'),
-      fax: formData.get('companyFax'),
-      website: formData.get('companyWebsite'),
-      hours: formData.get('companyHours'),
-      
-      // 연혁 정보 수집
-      history: []
-    };
-
-    // 연혁 항목들 수집
-    const historyItems = document.querySelectorAll('#historyList .history-item');
-    historyItems.forEach((item, index) => {
-      const year = formData.get(`historyYear_${index}`);
-      const event = formData.get(`historyEvent_${index}`);
-      if (year && event) {
-        companyData.history.push({ year, event });
-      }
-    });
-
-    // 사업 분야 상세 항목들 수집
-    const businessItems = [];
-    const businessItemElements = document.querySelectorAll('#businessList .business-item');
-    businessItemElements.forEach((item, index) => {
-      const title = formData.get(`businessTitle_${index}`);
-      const description = formData.get(`businessDescription_${index}`);
-      if (title && description) {
-        businessItems.push({ title, description });
-      }
-    });
-    companyData.businessItems = businessItems;
-
-    console.log('전송할 회사 데이터:', companyData);
-
     const response = await fetch('http://localhost:3000/api/admin/company', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStorage.getItem('auth_token')}`
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
       },
       body: JSON.stringify(companyData)
     });
 
     if (response.ok) {
-      const result = await response.json();
-      setButtonSuccess(submitBtn);
-      alert('회사 정보가 성공적으로 업데이트되었습니다.');
-      console.log('통합 회사 정보 업데이트 성공:', result);
+      setButtonSuccess(e.target.querySelector('.save-btn'), '저장 완료!');
+      setTimeout(() => {
+        setButtonLoading(e.target.querySelector('.save-btn'), '저장 중...');
+      }, 2000);
     } else {
-      const errorData = await response.json();
-      alert(`회사 정보 업데이트 실패: ${errorData.message || response.statusText}`);
-      setButtonError(submitBtn);
+      setButtonError(e.target.querySelector('.save-btn'), '저장 실패');
     }
   } catch (error) {
-    console.error('회사 정보 업데이트 실패:', error);
-    alert('회사 정보 업데이트 중 오류가 발생했습니다.');
-    setButtonError(submitBtn);
-  } finally {
-    setButtonLoading(submitBtn, false);
+    console.error('회사 정보 업데이트 오류:', error);
+    setButtonError(e.target.querySelector('.save-btn'), '저장 실패');
   }
 }
 
@@ -324,4 +272,41 @@ function reorderBusinessIndexes() {
       removeBtn.setAttribute('onclick', `removeBusiness(${newIndex})`);
     }
   });
+}
+
+// 현재 위치 가져오기
+function getCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        document.getElementById('mapLat').value = lat.toFixed(6);
+        document.getElementById('mapLng').value = lng.toFixed(6);
+        document.getElementById('mapZoom').value = 15;
+
+        alert(`현재 위치가 설정되었습니다.\n위도: ${lat.toFixed(6)}\n경도: ${lng.toFixed(6)}`);
+      },
+      function (error) {
+        console.error('위치 정보 가져오기 실패:', error);
+        alert('위치 정보를 가져올 수 없습니다. 브라우저 설정을 확인해주세요.');
+      }
+    );
+  } else {
+    alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+  }
+}
+
+// 주소로 검색
+function searchAddress() {
+  const address = document.getElementById('companyLocation').value;
+  if (!address) {
+    alert('먼저 주소를 입력해주세요.');
+    return;
+  }
+
+  // 네이버 지도 API를 사용하여 주소 검색
+  // 실제 구현에서는 네이버 지도 API 키가 필요합니다
+  alert(`주소 검색 기능을 사용하려면 네이버 지도 API 키가 필요합니다.\n주소: ${address}\n\n수동으로 좌표를 입력하거나, 네이버 지도에서 해당 주소를 찾아 좌표를 복사해주세요.`);
 }
