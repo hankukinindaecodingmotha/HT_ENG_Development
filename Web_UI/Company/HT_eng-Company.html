@@ -65,6 +65,7 @@
     <div id="footer-container"></div>
 
     <script src="../Components/Header/HT_eng-header.js"></script>
+    <script src="../Components/Footer/HT_eng-footer.js"></script>
     <script>
         // 회사 정보 로드
         async function loadCompanyInfo() {
@@ -271,7 +272,7 @@
             // 주소 변환 대신 기본 좌표 사용 (김포시 마스터비즈파크 정확한 위치)
             const defaultLat = 37.637966;
             const defaultLng = 126.680780;
-            
+
             console.log('주소 변환 대신 기본 좌표 사용:', address);
             initLeafletMap(defaultLat, defaultLng, address, 18);
         }

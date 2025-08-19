@@ -109,14 +109,27 @@ function loadHeader() {
     const container = document.getElementById('header-container');
     if (!container) return;
 
-    // 절대/동적 경로로 헤더 조각 불러오기
-    fetch(`${WEB_ROOT}/Components/Header/HT_eng-header.html`)
-        .then((res) => {
-            if (!res.ok) throw new Error('헤더 로딩 실패');
-            return res.text();
-        })
+    // 다중 경로 시도: 절대 경로 우선, 실패 시 상대 경로로 재시도
+    const candidates = [
+        `${WEB_ROOT}/Components/Header/HT_eng-header.html`,
+        '../Components/Header/HT_eng-header.html',
+        './Components/Header/HT_eng-header.html'
+    ];
+
+    function tryFetch(urls) {
+        if (!urls.length) return Promise.reject(new Error('모든 헤더 경로 로딩 실패'));
+        const [url, ...rest] = urls;
+        return fetch(url)
+            .then((res) => {
+                if (!res.ok) throw new Error(`헤더 로딩 실패: ${url}`);
+                return res.text();
+            })
+            .catch(() => tryFetch(rest));
+    }
+
+    tryFetch(candidates)
         .then((html) => {
-            // 경로를 현재 위치에 맞게 수정
+            // 상대 경로 보정: ../ -> WEB_ROOT 기준
             const modifiedHtml = html.replace(/\.\.\//g, `${WEB_ROOT}/`);
             container.innerHTML = modifiedHtml;
 
@@ -136,7 +149,14 @@ function loadHeader() {
                         if (activeContent) activeContent.classList.add('active');
                     });
                 });
+                // 상단바에서 벗어나더라도 메가메뉴 위에 있으면 닫지 않음
                 topBar.addEventListener('mouseleave', () => {
+                    if (megaMenu.matches(':hover')) return;
+                    megaMenu.classList.remove('active');
+                    megaContents.forEach((c) => c.classList.remove('active'));
+                });
+                // 메가메뉴 영역을 벗어났을 때 닫기
+                megaMenu.addEventListener('mouseleave', () => {
                     megaMenu.classList.remove('active');
                     megaContents.forEach((c) => c.classList.remove('active'));
                 });

@@ -34,7 +34,7 @@ body {
     left: 0;
     width: 100%;
     /* 전체 너비 */
-    z-index: 1300;
+    z-index: 9999;
     /* 다른 요소 위에 표시 */
     height: 80px;
     /* 높이 설정 */
@@ -152,7 +152,7 @@ body {
 
 /* 메가 메뉴 박스 */
 .mega-menu {
-    position: absolute;
+    position: fixed;
     /* 절대 위치 */
     top: 80px;
     /* 상단바 아래 위치 */
@@ -173,7 +173,7 @@ body {
     /* 넘치는 부분 숨김 */
     transition: max-height 0.4s ease, opacity 0.4s ease;
     /* 트랜지션 */
-    z-index: 1400;
+    z-index: 10000;
     /* 다른 요소 위에 */
     display: flex;
     /* 가로 정렬 */

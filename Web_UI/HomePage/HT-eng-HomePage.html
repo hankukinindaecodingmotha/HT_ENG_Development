@@ -93,25 +93,70 @@
       </div>
     </section>
 
-    <!-- 푸터 -->
-    <footer class="footer">
-      <p>© 2025 HTENG Co., Ltd. | 사업자등록번호: 123-45-67890</p>
-      <p>주소: 서울특별시 강남구 어딘가로 123 | 대표: 홍길동</p>
-      <p>전화: 02-123-4567 | 이메일: info@hteng.com</p>
-    </footer>
   </main>
 
-  <!-- header.html을 불러온 후 header.js 기능 실행 -->
+  <!-- 푸터 -->
+  <div id="footer-container"></div>
+
+  <!-- 푸터 로더 -->
+  <script src="../Components/Footer/HT_eng-footer.js"></script>
+
+  <!-- 홈 전용 헤더 로더: 단일 경로로 헤더 주입 -->
   <script>
-    fetch('../Components/Header/HT_eng-header.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('header-container').innerHTML = html;
-        const script = document.createElement('script');
-        script.src = '../Components/Header/HT_eng-header.js';
-        document.body.appendChild(script);
-      })
-      .catch(err => console.error('헤더 로딩 실패:', err));
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
+        var container = document.getElementById('header-container');
+        if (!container || container.children.length > 0) return;
+
+        // 헤더 HTML 로드 및 주입
+        fetch('../Components/Header/HT_eng-header.html')
+          .then(function (r) {
+            if (!r.ok) throw new Error('header html not found');
+            return r.text();
+          })
+          .then(function (html) {
+            container.innerHTML = html;
+
+            // 메가메뉴 이벤트 바인딩
+            var menuItems = document.querySelectorAll('.menu-item');
+            var megaMenu = document.getElementById('megaMenu');
+            var megaContents = document.querySelectorAll('.mega-menu-content');
+            var topBar = document.querySelector('.top-bar');
+
+            if (menuItems && megaMenu && megaContents && topBar) {
+              menuItems.forEach(function (item) {
+                item.addEventListener('mouseenter', function () {
+                  var menu = item.getAttribute('data-menu');
+                  megaMenu.classList.add('active');
+                  megaContents.forEach(function (c) { c.classList.remove('active'); });
+                  var activeContent = document.querySelector('.mega-menu-content[data-menu="' + menu + '"]');
+                  if (activeContent) activeContent.classList.add('active');
+                });
+              });
+
+              topBar.addEventListener('mouseleave', function () {
+                if (megaMenu.matches(':hover')) return;
+                megaMenu.classList.remove('active');
+                megaContents.forEach(function (c) { c.classList.remove('active'); });
+              });
+
+              megaMenu.addEventListener('mouseleave', function () {
+                megaMenu.classList.remove('active');
+                megaContents.forEach(function (c) { c.classList.remove('active'); });
+              });
+            }
+
+            // 인증 UI 렌더링
+            if (typeof renderAuthUI === 'function') {
+              renderAuthUI();
+            }
+          })
+          .catch(function () {
+            // 에러 시 최소한의 헤더만 표시
+            container.innerHTML = '<header class="top-bar"><div class="top-bar-left"><img src="../Assesets/Image/HT_ENG.png" class="logo" alt="로고"/></div><div class="top-bar-center"></div><div class="top-bar-right"><span id="authArea"><a href="../LoginPage/HT-eng-Login.html">로그인</a></span></div></header>';
+          });
+      }, 100);
+    });
   </script>
 </body>
 

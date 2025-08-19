@@ -4,7 +4,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   // 기존 애니메이션 기능 유지
   initBrandAnimations();
-  initMegaMenu();
   
   // 서버에서 데이터 로드하여 업데이트
   loadMainPageData();
