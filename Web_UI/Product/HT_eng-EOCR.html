@@ -129,10 +129,10 @@
               <div class="filter-group">
                 <span class="filter-label">카테고리:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('카테고리', 'Analog')">Analog</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('카테고리', 'Digital')">Digital</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('카테고리', 'Accessory')">Accessory</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('카테고리', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('카테고리', 'Analog', event)">Analog</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('카테고리', 'Digital', event)">Digital</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('카테고리', 'Accessory', event)">Accessory</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('카테고리', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -140,9 +140,9 @@
               <div class="filter-group">
                 <span class="filter-label">AC/DC:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('AC_DC', 'AC')">AC</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('AC_DC', 'DC')">DC</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('AC_DC', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('AC_DC', 'AC', event)">AC</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('AC_DC', 'DC', event)">DC</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('AC_DC', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -150,9 +150,9 @@
               <div class="filter-group">
                 <span class="filter-label">보호종류:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('보호종류', '전류')">전류</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('보호종류', '전압')">전압</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('보호종류', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('보호종류', '전류', event)">전류</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('보호종류', '전압', event)">전압</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('보호종류', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -160,9 +160,9 @@
               <div class="filter-group">
                 <span class="filter-label">통신여부:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('통신여부', '비통신')">비통신</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('통신여부', '통신')">통신</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('통신여부', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('통신여부', '비통신', event)">비통신</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('통신여부', '통신', event)">통신</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('통신여부', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -170,13 +170,13 @@
               <div class="filter-group">
                 <span class="filter-label">통신종류:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('통신종류', '4-20mA')">4-20mA</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('통신종류', '불가')">불가</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('통신종류', '4-20mA', event)">4-20mA</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('통신종류', '불가', event)">불가</button>
                   <button class="filter-btn"
-                    onclick="setAdvancedFilter('통신종류', 'Modbus-RTU(RS485)')">Modbus-RTU(RS485)</button>
+                    onclick="setAdvancedFilter('통신종류', 'Modbus-RTU(RS485)', event)">Modbus-RTU(RS485)</button>
                   <button class="filter-btn"
-                    onclick="setAdvancedFilter('통신종류', 'Modbus-RTU(RS485)/4-20mA')">Modbus-RTU(RS485)/4-20mA</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('통신종류', '모든 조건')">모든 조건</button>
+                    onclick="setAdvancedFilter('통신종류', 'Modbus-RTU(RS485)/4-20mA', event)">Modbus-RTU(RS485)/4-20mA</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('통신종류', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -184,9 +184,9 @@
               <div class="filter-group">
                 <span class="filter-label">누설(지락):</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('누설(지락)', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('누설(지락)', '불가능')">불가능</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('누설(지락)', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('누설(지락)', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('누설(지락)', '불가능', event)">불가능</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('누설(지락)', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -194,9 +194,9 @@
               <div class="filter-group">
                 <span class="filter-label">단락:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('단락', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('단락', '불가능')">불가능</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('단락', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('단락', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('단락', '불가능', event)">불가능</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('단락', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -204,11 +204,11 @@
               <div class="filter-group">
                 <span class="filter-label">과전류/저전류:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '불가능')">불가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '과전류')">과전류</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '저전류')">저전류</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('과전류/저전류', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '불가능', event)">불가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '과전류', event)">과전류</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '저전류', event)">저전류</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('과전류/저전류', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -216,10 +216,10 @@
               <div class="filter-group">
                 <span class="filter-label">결상:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('결상', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('결상', '불가능')">불가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('결상', 'X')">X</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('결상', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('결상', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('결상', '불가능', event)">불가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('결상', 'X', event)">X</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('결상', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -227,10 +227,10 @@
               <div class="filter-group">
                 <span class="filter-label">역상:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('역상', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('역상', '불가능')">불가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('역상', 'X')">X</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('역상', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('역상', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('역상', '불가능', event)">불가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('역상', 'X', event)">X</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('역상', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -238,11 +238,11 @@
               <div class="filter-group">
                 <span class="filter-label">과전압/저전압:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '과전압')">과전압</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '저전압')">저전압</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '불가능')">불가능</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('과전압/저전압', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '과전압', event)">과전압</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '저전압', event)">저전압</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '불가능', event)">불가능</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('과전압/저전압', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -250,9 +250,9 @@
               <div class="filter-group">
                 <span class="filter-label">전력:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('전력', '가능')">가능</button>
-                  <button class="filter-btn" onclick="setAdvancedFilter('전력', '불가')">불가</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('전력', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('전력', '가능', event)">가능</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('전력', '불가', event)">불가</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('전력', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 
@@ -260,8 +260,8 @@
               <div class="filter-group">
                 <span class="filter-label">내장 ZCT:</span>
                 <div class="filter-buttons">
-                  <button class="filter-btn" onclick="setAdvancedFilter('내장 ZCT', 'O')">O</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('내장 ZCT', '모든 조건')">모든 조건</button>
+                  <button class="filter-btn" onclick="setAdvancedFilter('내장 ZCT', 'O', event)">O</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('내장 ZCT', '모든 조건', event)">모든 조건</button>
                 </div>
               </div>
 

@@ -100,11 +100,17 @@ function renderProducts(products) {
   const productsGrid = document.getElementById('productsGrid');
   const noProductsMessage = document.getElementById('noProductsMessage');
 
+  console.log('renderProducts 호출됨 - 제품 수:', products.length); // 디버깅용 로그
+
+  // 검색 결과가 없을 때 기존 제품들을 모두 제거
   if (products.length === 0) {
+    console.log('검색 결과 없음 - 기존 제품들을 모두 제거'); // 디버깅용 로그
+    productsGrid.innerHTML = ''; // 기존 제품들을 모두 제거
     noProductsMessage.style.display = 'block';
     return;
   }
 
+  console.log('제품 렌더링 시작 - 제품 수:', products.length); // 디버깅용 로그
   noProductsMessage.style.display = 'none';
 
   const productsHTML = products.map(product => `
@@ -126,24 +132,31 @@ function renderProducts(products) {
   `).join('');
 
   productsGrid.innerHTML = productsHTML;
+  console.log('제품 렌더링 완료'); // 디버깅용 로그
 }
 
 // 제품 검색
 function filterProducts() {
-  const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+  const searchTerm = document.getElementById('productSearch')?.value?.toLowerCase() || '';
 
-  let filteredProducts = allProducts;
+  let filteredProducts = [...allProducts];
+
+  console.log('필터링 시작 - 전체 제품 수:', allProducts.length); // 디버깅용 로그
 
   // 검색어 필터
   if (searchTerm) {
     filteredProducts = filteredProducts.filter(product =>
       (product.제품 || '').toLowerCase().includes(searchTerm) ||
+      (product.모델명 || '').toLowerCase().includes(searchTerm) ||
       (product.상세설명 || '').toLowerCase().includes(searchTerm)
     );
+    console.log('검색어 필터 적용 후:', filteredProducts.length); // 디버깅용 로그
   }
 
   // 고급 필터 적용
   filteredProducts = applyAdvancedFilters(filteredProducts);
+
+  console.log('최종 필터링 결과:', filteredProducts.length); // 디버깅용 로그
 
   renderProducts(filteredProducts);
 }
@@ -152,8 +165,12 @@ function filterProducts() {
 function applyAdvancedFilters(products) {
   let filtered = [...products];
 
+  console.log('현재 필터 상태:', advancedFilters); // 디버깅용 로그
+
   Object.entries(advancedFilters).forEach(([key, value]) => {
     if (value && value !== '모든 조건') {
+      const beforeCount = filtered.length;
+
       switch (key) {
         case '카테고리':
           filtered = filtered.filter(p => p.제품군 === value);
@@ -195,6 +212,8 @@ function applyAdvancedFilters(products) {
           filtered = filtered.filter(p => p['내장 ZCT'] === value);
           break;
       }
+
+      console.log(`${key} 필터 적용: ${beforeCount} → ${filtered.length}`); // 디버깅용 로그
     }
   });
 
@@ -219,18 +238,22 @@ function toggleAdvancedFilters() {
 }
 
 // 고급 필터 설정
-function setAdvancedFilter(filterType, value) {
+function setAdvancedFilter(filterType, value, event) {
   // 해당 필터 그룹의 모든 버튼 비활성화
   const filterGroup = event.target.closest('.filter-group');
-  filterGroup.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
+  if (filterGroup) {
+    filterGroup.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
 
-  // 클릭된 버튼 활성화
-  event.target.classList.add('active');
+    // 클릭된 버튼 활성화
+    event.target.classList.add('active');
+  }
 
   // 필터 상태 업데이트
   advancedFilters[filterType] = value;
+
+  console.log('필터 적용:', filterType, value); // 디버깅용 로그
 
   // 제품 필터링 적용
   filterProducts();
@@ -263,13 +286,13 @@ function resetAdvancedFilters() {
 function setViewMode(mode) {
   const productsGrid = document.getElementById('productsGrid');
   const viewButtons = document.querySelectorAll('.view-mode-btn');
-  
+
   // 모든 보기 모드 버튼 비활성화
   viewButtons.forEach(btn => btn.classList.remove('active'));
-  
+
   // 클릭된 버튼 활성화
   event.target.classList.add('active');
-  
+
   // 제품 그리드 클래스 변경
   productsGrid.className = `products-grid ${mode}`;
 }
@@ -295,12 +318,12 @@ function showProductDetail(productName) {
         <h3>제품 사양</h3>
         <div class="specs-list">
           ${Object.entries(product).map(([key, value]) =>
-            key !== '제품' && key !== '모델명' && key !== '제품군' && key !== '상세설명' && value ?
-              `<div class="spec-row">
+    key !== '제품' && key !== '모델명' && key !== '제품군' && key !== '상세설명' && value ?
+      `<div class="spec-row">
                 <span class="spec-key">${key}</span>
                 <span class="spec-value">${value}</span>
               </div>` : ''
-          ).join('')}
+  ).join('')}
         </div>
       </div>
       ${product.상세설명 ? `
