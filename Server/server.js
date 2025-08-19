@@ -17,8 +17,8 @@ const PORT = process.env.PORT || 3000;
 
 // CORS 설정 (프로덕션에서는 특정 도메인만 허용)
 const corsOptions = {
-    origin: NODE_ENV === 'production' 
-        ? ['http://hteng.co.kr', 'https://hteng.co.kr'] 
+    origin: NODE_ENV === 'production'
+        ? ['http://hteng.co.kr', 'https://hteng.co.kr']
         : true,
     credentials: true
 };
@@ -261,82 +261,82 @@ global.valuesInfo = {
 
 // 메인페이지 데이터
 global.mainPageData = {
-  // 배너 이미지 관리
-  banner: {
-    image: '../Assesets/Image/회사 배너.png',
-    alt: 'HTeng 사진'
-  },
-  
-  // 브랜드 관리
-  brands: [
-    {
-      name: '슈나이더',
-      image: '../Assesets/Image/슈나이더.png',
-      url: 'https://www.se.com/kr/ko/',
-      alt: '슈나이더'
+    // 배너 이미지 관리
+    banner: {
+        image: '../Assesets/Image/회사 배너.png',
+        alt: 'HTeng 사진'
     },
-    {
-      name: '피자토',
-      image: '../Assesets/Image/피자토.png',
-      url: 'https://www.pizzato.com',
-      alt: '피자토'
+
+    // 브랜드 관리
+    brands: [
+        {
+            name: '슈나이더',
+            image: '../Assesets/Image/슈나이더.png',
+            url: 'https://www.se.com/kr/ko/',
+            alt: '슈나이더'
+        },
+        {
+            name: '피자토',
+            image: '../Assesets/Image/피자토.png',
+            url: 'https://www.pizzato.com',
+            alt: '피자토'
+        },
+        {
+            name: '이튼',
+            image: '../Assesets/Image/이튼.png',
+            url: 'https://www.eaton.com/kr/ko-kr.html',
+            alt: '이튼'
+        },
+        {
+            name: '르그랑',
+            image: '../Assesets/Image/르그랑.png',
+            url: 'https://www.legrand.co.kr/ko',
+            alt: '르그랑'
+        }
+    ],
+
+    // Contact 섹션 관리
+    contact: {
+        ceo: {
+            name: '정탁영',
+            position: 'CEO',
+            phone: '010-1234-1234',
+            email: 'contact@hteng.com',
+            address: '서울특별시 강남구 어딘가로 123',
+            experience: [
+                '슈나이더 일렉트릭: 2000-2010',
+                'HT_ENG: ~ 2025'
+            ],
+            image: '../Assesets/Image/CEO.jpeg'
+        },
+        manager: {
+            name: '민과장님',
+            position: 'Manager',
+            phone: '010-1234-1234',
+            email: 'contact@hteng.com',
+            address: '서울특별시 강남구 어딘가로 123',
+            experience: [
+                'HT_ENG: ~2025'
+            ],
+            image: '../Assesets/Image/CEO.jpeg'
+        }
     },
-    {
-      name: '이튼',
-      image: '../Assesets/Image/이튼.png',
-      url: 'https://www.eaton.com/kr/ko-kr.html',
-      alt: '이튼'
-    },
-    {
-      name: '르그랑',
-      image: '../Assesets/Image/르그랑.png',
-      url: 'https://www.legrand.co.kr/ko',
-      alt: '르그랑'
-    }
-  ],
-  
-  // Contact 섹션 관리
-  contact: {
-    ceo: {
-      name: '정탁영',
-      position: 'CEO',
-      phone: '010-1234-1234',
-      email: 'contact@hteng.com',
-      address: '서울특별시 강남구 어딘가로 123',
-      experience: [
-        '슈나이더 일렉트릭: 2000-2010',
-        'HT_ENG: ~ 2025'
-      ],
-      image: '../Assesets/Image/CEO.jpeg'
-    },
-    manager: {
-      name: '민과장님',
-      position: 'Manager',
-      phone: '010-1234-1234',
-      email: 'contact@hteng.com',
-      address: '서울특별시 강남구 어딘가로 123',
-      experience: [
-        'HT_ENG: ~2025'
-      ],
-      image: '../Assesets/Image/CEO.jpeg'
-    }
-  },
-  
-  // 설명 섹션 관리
-  descriptions: [
-    {
-      title: '판매',
-      image: '../Assesets/Image/sale.jpg',
-      alt: '판매 이미지',
-      content: 'HTENG는 다양한 전기 부품을 합리적인 가격으로 제공합니다. 슈나이더, 이튼, 르그랑 등의 브랜드를 취급합니다.'
-    },
-    {
-      title: '기술 지원',
-      image: '../Assesets/Image/support.jpg',
-      alt: '기술 지원 이미지',
-      content: '고객의 안정적인 시스템 운영을 위해 전문적인 기술 지원을 제공합니다. 설치부터 유지보수까지 책임집니다.'
-    }
-  ]
+
+    // 설명 섹션 관리
+    descriptions: [
+        {
+            title: '판매',
+            image: '../Assesets/Image/sale.jpg',
+            alt: '판매 이미지',
+            content: 'HTENG는 다양한 전기 부품을 합리적인 가격으로 제공합니다. 슈나이더, 이튼, 르그랑 등의 브랜드를 취급합니다.'
+        },
+        {
+            title: '기술 지원',
+            image: '../Assesets/Image/support.jpg',
+            alt: '기술 지원 이미지',
+            content: '고객의 안정적인 시스템 운영을 위해 전문적인 기술 지원을 제공합니다. 설치부터 유지보수까지 책임집니다.'
+        }
+    ]
 };
 
 // Swagger
@@ -1200,27 +1200,27 @@ app.get('/api/admin/company-intro', authenticateToken, requireAdmin, (req, res) 
 
 // 메인페이지 데이터 가져오기 (공개)
 app.get('/api/main-page', (req, res) => {
-  res.json(global.mainPageData);
+    res.json(global.mainPageData);
 });
 
 // 메인페이지 데이터 업데이트 (관리자)
 app.put('/api/admin/main-page', authenticateToken, (req, res) => {
-  try {
-    const { banner, brands, contact, descriptions } = req.body;
-    
-    // 데이터 유효성 검사
-    if (banner) global.mainPageData.banner = banner;
-    if (brands) global.mainPageData.brands = brands;
-    if (contact) global.mainPageData.contact = contact;
-    if (descriptions) global.mainPageData.descriptions = descriptions;
-    
-    res.json({ 
-      message: '메인페이지 데이터가 업데이트되었습니다.',
-      data: global.mainPageData 
-    });
-  } catch (error) {
-    res.status(500).json({ error: '메인페이지 데이터 업데이트 중 오류가 발생했습니다.' });
-  }
+    try {
+        const { banner, brands, contact, descriptions } = req.body;
+
+        // 데이터 유효성 검사
+        if (banner) global.mainPageData.banner = banner;
+        if (brands) global.mainPageData.brands = brands;
+        if (contact) global.mainPageData.contact = contact;
+        if (descriptions) global.mainPageData.descriptions = descriptions;
+
+        res.json({
+            message: '메인페이지 데이터가 업데이트되었습니다.',
+            data: global.mainPageData
+        });
+    } catch (error) {
+        res.status(500).json({ error: '메인페이지 데이터 업데이트 중 오류가 발생했습니다.' });
+    }
 });
 
 app.listen(PORT, () => {

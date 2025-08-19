@@ -24,7 +24,10 @@ body {
 .admin-wrap {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 24px 20px 48px
+    padding: 100px 20px 48px;
+    min-height: calc(100vh - 300px);
+    height: auto;
+    overflow: visible
 }
 
 .admin-header {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="HT_eng-members.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <!-- 헤더 -->
     <div id="header-container"></div>
@@ -31,28 +33,29 @@
     <div id="footer-container"></div>
 
     <script src="../Components/Header/HT_eng-header.js"></script>
+    <script src="../Components/Footer/HT_eng-footer.js"></script>
     <script>
         // 구성원 정보 로드
         async function loadMembersInfo() {
             try {
                 console.log('구성원 정보 로드 시작...');
                 const response = await fetch('http://localhost:3000/api/intro-pages');
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     console.log('받은 데이터:', data);
-                    
+
                     if (data.members) {
                         const membersInfo = data.members;
                         console.log('구성원 정보:', membersInfo);
-                        
+
                         // 페이지 제목과 부제목 업데이트
                         const pageTitle = document.getElementById('pageTitle');
                         const pageSubtitle = document.getElementById('pageSubtitle');
-                        
+
                         if (pageTitle) pageTitle.textContent = membersInfo.title || '직원 소개';
                         if (pageSubtitle) pageSubtitle.textContent = membersInfo.subtitle || '전문성과 열정으로 고객의 성공을 만들어갑니다';
-                        
+
                         // 구성원 목록 렌더링
                         renderMembersList(membersInfo.members || []);
                     } else {
@@ -72,9 +75,9 @@
         // 구성원 목록 렌더링
         function renderMembersList(members) {
             const employeeList = document.getElementById('employeeList');
-            
+
             if (!employeeList) return;
-            
+
             if (!members || members.length === 0) {
                 employeeList.innerHTML = `
                     <div class="no-members-message">
@@ -84,7 +87,7 @@
                 `;
                 return;
             }
-            
+
             const membersHTML = members.map((member, index) => `
                 <div class="employee-card">
                     <div class="employee-image">
@@ -100,7 +103,7 @@
                     </div>
                 </div>
             `).join('');
-            
+
             employeeList.innerHTML = membersHTML;
         }
 
@@ -118,9 +121,10 @@
         }
 
         // 페이지 로드 시 구성원 정보 로드
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadMembersInfo();
         });
     </script>
 </body>
+
 </html>

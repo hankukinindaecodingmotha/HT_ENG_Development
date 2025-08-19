@@ -208,7 +208,8 @@
                   <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '불가능', event)">불가능</button>
                   <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '과전류', event)">과전류</button>
                   <button class="filter-btn" onclick="setAdvancedFilter('과전류/저전류', '저전류', event)">저전류</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('과전류/저전류', '모든 조건', event)">모든 조건</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('과전류/저전류', '모든 조건', event)">모든
+                    조건</button>
                 </div>
               </div>
 
@@ -242,7 +243,8 @@
                   <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '저전압', event)">저전압</button>
                   <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '가능', event)">가능</button>
                   <button class="filter-btn" onclick="setAdvancedFilter('과전압/저전압', '불가능', event)">불가능</button>
-                  <button class="filter-btn active" onclick="setAdvancedFilter('과전압/저전압', '모든 조건', event)">모든 조건</button>
+                  <button class="filter-btn active" onclick="setAdvancedFilter('과전압/저전압', '모든 조건', event)">모든
+                    조건</button>
                 </div>
               </div>
 
@@ -283,7 +285,7 @@
               <button class="view-mode-btn" onclick="setViewMode('grid-4')">4열</button>
               <button class="view-mode-btn" onclick="setViewMode('grid-8')">8열</button>
             </div>
-            
+
             <div id="productsGrid" class="products-grid grid-2">
               <!-- 제품들이 여기에 동적으로 로드됩니다 -->
             </div>
@@ -454,6 +456,9 @@
     </div>
   </main>
 
+  <!-- Footer Container -->
+  <div id="footer-container"></div>
+
   <!-- 이미지 모달 -->
   <div class="image-modal" id="imageModal">
     <div class="modal-content">
@@ -464,6 +469,7 @@
 
   <script defer src="../Components/Header/HT_eng-header.js"></script>
   <script defer src="HT_eng-EOCR.js"></script>
+  <script defer src="../Components/Footer/HT_eng-footer.js"></script>
 </body>
 
 </html>
