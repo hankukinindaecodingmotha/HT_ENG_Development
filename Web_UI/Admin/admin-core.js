@@ -3,6 +3,9 @@
 
 // 관리자 페이지 초기화
 function initAdmin() {
+  // 사용자 정보 표시
+  displayUserInfo();
+  
   // 초기 데이터 로드
   loadStats();
   loadUsers();
@@ -11,6 +14,32 @@ function initAdmin() {
 
   // 사용자 관리 섹션을 기본적으로 표시
   showUserManagement();
+}
+
+// 현재 로그인한 사용자 정보 표시
+function displayUserInfo() {
+  const userInfo = sessionStorage.getItem('user_info');
+  if (userInfo) {
+    try {
+      const user = JSON.parse(userInfo);
+      const currentUserElement = document.getElementById('currentUser');
+      if (currentUserElement) {
+        currentUserElement.innerHTML = `
+          <i class="fas fa-user"></i> ${user.displayName} (${user.username})
+        `;
+      }
+    } catch (error) {
+      console.error('사용자 정보 표시 오류:', error);
+    }
+  }
+}
+
+// 로그아웃
+function logout() {
+  if (confirm('정말로 로그아웃하시겠습니까?')) {
+    sessionStorage.clear();
+    window.location.href = 'HT_eng-Admin-Login.html';
+  }
 }
 
 // 이벤트 리스너 설정

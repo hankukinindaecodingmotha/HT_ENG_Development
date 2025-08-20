@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 로그인 - HTeng</title>
+  <link rel="stylesheet" href="HT_eng-Admin.css" />
+  <link rel="stylesheet" href="../Components/Header/HT_eng-header.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-header {
+      margin-bottom: 30px;
+    }
+
+    .login-header h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+
+    .login-header p {
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .login-form {
+      text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      background: #fdf2f2;
+      border: 1px solid #fecaca;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .back-to-home {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .back-to-home a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-to-home a:hover {
+      text-decoration: underline;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- header 삽입될 위치 -->
+  <div id="header-container"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1><i class="fas fa-user-shield"></i> 관리자 로그인</h1>
+        <p>HTeng 관리자 페이지에 접근하려면 로그인하세요</p>
+      </div>
+
+      <div class="error-message" id="errorMessage"></div>
+
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label for="username">아이디</label>
+          <input type="text" id="username" name="username" required placeholder="관리자 아이디를 입력하세요">
+        </div>
+
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" name="password" required placeholder="비밀번호를 입력하세요">
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">
+          <span class="btn-text">로그인</span>
+          <span class="loading" style="display: none;"></span>
+        </button>
+      </form>
+
+      <div class="back-to-home">
+        <a href="../HomePage/HT-eng-HomePage.html">
+          <i class="fas fa-home"></i> 홈페이지로 돌아가기
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 헤더 로드
+    fetch('../Components/Header/HT_eng-header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('header-container').innerHTML = html;
+      })
+      .catch(error => {
+        console.error('헤더 로드 실패:', error);
+      });
+
+    // 로그인 폼 처리
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('loginBtn');
+      const btnText = loginBtn.querySelector('.btn-text');
+      const loading = loginBtn.querySelector('.loading');
+      const errorMessage = document.getElementById('errorMessage');
+
+      // 로딩 상태 표시
+      loginBtn.disabled = true;
+      btnText.style.display = 'none';
+      loading.style.display = 'inline-block';
+      errorMessage.style.display = 'none';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // 로그인 성공
+          console.log('로그인 성공:', data);
+          console.log('응답 상태:', response.status);
+          console.log('응답 헤더:', response.headers);
+
+          // 세션 스토리지에 저장
+          try {
+            sessionStorage.setItem('auth_token', data.token);
+            sessionStorage.setItem('user_info', JSON.stringify({
+              username: data.username,
+              role: data.role,
+              displayName: data.displayName
+            }));
+            console.log('세션 스토리지 저장 성공');
+          } catch (storageError) {
+            console.error('세션 스토리지 저장 실패:', storageError);
+          }
+
+          console.log('저장된 토큰:', sessionStorage.getItem('auth_token'));
+          console.log('저장된 사용자 정보:', sessionStorage.getItem('user_info'));
+          console.log('세션 스토리지 사용 가능:', typeof sessionStorage !== 'undefined');
+
+          // 즉시 리다이렉트
+          console.log('로그인 성공, 즉시 리다이렉트...');
+          console.log('현재 URL:', window.location.href);
+          console.log('리다이렉트할 경로:', '/Web_UI/Admin/HT_eng-Admin.html');
+
+          // 여러 방법으로 리다이렉트 시도
+          console.log('리다이렉트 시도 시작...');
+
+          // 방법 1: window.location.href
+          try {
+            console.log('방법 1 시도: window.location.href');
+            window.location.href = '/Web_UI/Admin/HT_eng-Admin.html';
+          } catch (error) {
+            console.error('방법 1 실패:', error);
+
+            // 방법 2: location.href
+            try {
+              console.log('방법 2 시도: location.href');
+              location.href = '/Web_UI/Admin/HT_eng-Admin.html';
+            } catch (error2) {
+              console.error('방법 2 실패:', error2);
+
+              // 방법 3: location.replace
+              try {
+                console.log('방법 3 시도: location.replace');
+                location.replace('/Web_UI/Admin/HT_eng-Admin.html');
+              } catch (error3) {
+                console.error('방법 3 실패:', error3);
+
+                // 방법 4: 강제 페이지 이동
+                console.log('방법 4 시도: 강제 페이지 이동');
+                document.location.href = '/Web_UI/Admin/HT_eng-Admin.html';
+              }
+            }
+          }
+
+          // 백업 리다이렉트 (1초 후)
+          setTimeout(() => {
+            console.log('백업 리다이렉트 실행...');
+            if (window.location.pathname !== '/Web_UI/Admin/HT_eng-Admin.html') {
+              console.log('아직 이동되지 않음, 강제 이동 시도...');
+              window.location.href = '/Web_UI/Admin/HT_eng-Admin.html';
+            }
+          }, 1000);
+        } else {
+          // 로그인 실패
+          console.log('로그인 실패:', data);
+          errorMessage.textContent = data.message || '로그인에 실패했습니다.';
+          errorMessage.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('로그인 오류:', error);
+        errorMessage.textContent = '서버 연결에 실패했습니다.';
+        errorMessage.style.display = 'block';
+      } finally {
+        // 로딩 상태 해제
+        loginBtn.disabled = false;
+        btnText.style.display = 'inline';
+        loading.style.display = 'none';
+      }
+    });
+
+    // Enter 키로 로그인
+    document.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,25 +1,34 @@
 // HomePage JavaScript 함수
 
+// 배너 슬라이더 변수
+let currentSlide = 0;
+let slideInterval;
+let slides;
+let indicators;
+
 // 페이지 로드 시 메인페이지 데이터 로드
 document.addEventListener('DOMContentLoaded', function () {
   // 기존 애니메이션 기능 유지
   initBrandAnimations();
-  
+
   // 서버에서 데이터 로드하여 업데이트
   loadMainPageData();
-  
+
   // 관리자 페이지로부터의 메시지 리스너 추가
   window.addEventListener('message', handleAdminMessage);
+
+  // 배너 슬라이더 초기화
+  initBannerSlider();
 });
 
 // 관리자 페이지로부터의 메시지 처리
 function handleAdminMessage(event) {
   if (event.data && event.data.type === 'UPDATE_MAIN_PAGE') {
     console.log('관리자 페이지로부터 업데이트 메시지 수신:', event.data.data);
-    
+
     // 즉시 홈페이지 업데이트
     updateMainPage(event.data.data);
-    
+
     // 사용자에게 알림
     showUpdateNotification('관리자 페이지에서 변경한 내용이 즉시 적용되었습니다!');
   }
@@ -32,7 +41,7 @@ function showUpdateNotification(message) {
   if (existingNotification) {
     existingNotification.remove();
   }
-  
+
   // 새 알림 생성
   const notification = document.createElement('div');
   notification.className = 'update-notification';
@@ -45,7 +54,7 @@ function showUpdateNotification(message) {
       </button>
     </div>
   `;
-  
+
   // 스타일 적용
   notification.style.cssText = `
     position: fixed;
@@ -59,7 +68,7 @@ function showUpdateNotification(message) {
     z-index: 10000;
     animation: slideIn 0.3s ease-out;
   `;
-  
+
   // 알림 내용 스타일
   notification.querySelector('.notification-content').style.cssText = `
     display: flex;
@@ -67,7 +76,7 @@ function showUpdateNotification(message) {
     gap: 10px;
     font-size: 14px;
   `;
-  
+
   // 닫기 버튼 스타일
   notification.querySelector('button').style.cssText = `
     background: none;
@@ -77,7 +86,7 @@ function showUpdateNotification(message) {
     padding: 0;
     font-size: 16px;
   `;
-  
+
   // 애니메이션 CSS 추가
   if (!document.querySelector('#notification-styles')) {
     const style = document.createElement('style');
@@ -90,16 +99,112 @@ function showUpdateNotification(message) {
     `;
     document.head.appendChild(style);
   }
-  
+
   // 알림 표시
   document.body.appendChild(notification);
-  
+
   // 5초 후 자동 제거
   setTimeout(() => {
     if (notification.parentElement) {
       notification.remove();
     }
   }, 5000);
+}
+
+// 배너 슬라이더 초기화
+function initBannerSlider() {
+  // 슬라이드 요소들 가져오기
+  slides = document.querySelectorAll('.slide');
+  indicators = document.querySelectorAll('.indicator');
+
+  // 자동 슬라이드 시작 (5초마다)
+  startAutoSlide();
+
+  // 마우스 호버 시 자동 슬라이드 일시정지
+  const sliderContainer = document.querySelector('.slider-container');
+  sliderContainer.addEventListener('mouseenter', pauseAutoSlide);
+  sliderContainer.addEventListener('mouseleave', startAutoSlide);
+}
+
+// 자동 슬라이드 시작
+function startAutoSlide() {
+  slideInterval = setInterval(() => {
+    changeSlide(1);
+  }, 5000); // 5초마다 전환하여 각 배너를 충분히 볼 수 있도록 함
+}
+
+// 자동 슬라이드 일시정지
+function pauseAutoSlide() {
+  clearInterval(slideInterval);
+}
+
+// 슬라이드 변경
+function changeSlide(direction) {
+  // 현재 슬라이드 비활성화
+  slides[currentSlide].classList.remove('active');
+  indicators[currentSlide].classList.remove('active');
+  
+  // 다음 슬라이드 계산
+  currentSlide += direction;
+  
+  // 슬라이드 범위 체크
+  if (currentSlide >= slides.length) {
+    currentSlide = 0;
+  } else if (currentSlide < 0) {
+    currentSlide = slides.length - 1;
+  }
+  
+  // 새 슬라이드 활성화
+  slides[currentSlide].classList.add('active');
+  indicators[currentSlide].classList.add('active');
+  
+  // 컨텐츠 애니메이션 효과
+  const currentContent = slides[currentSlide].querySelector('.slide-content');
+  if (currentContent) {
+    currentContent.style.opacity = '0';
+    currentContent.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    
+    setTimeout(() => {
+      currentContent.style.transition = 'all 0.6s ease';
+      currentContent.style.opacity = '1';
+      currentContent.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 100);
+  }
+  
+  // 자동 슬라이드 재시작
+  pauseAutoSlide();
+  startAutoSlide();
+}
+
+// 특정 슬라이드로 이동
+function goToSlide(slideIndex) {
+  // 현재 슬라이드 비활성화
+  slides[currentSlide].classList.remove('active');
+  indicators[currentSlide].classList.remove('active');
+  
+  // 새 슬라이드 설정
+  currentSlide = slideIndex;
+  
+  // 새 슬라이드 활성화
+  slides[currentSlide].classList.add('active');
+  indicators[currentSlide].classList.add('active');
+  
+  // 컨텐츠 애니메이션 효과
+  const currentContent = slides[currentSlide].querySelector('.slide-content');
+  if (currentContent) {
+    currentContent.style.opacity = '0';
+    currentContent.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    
+    setTimeout(() => {
+      currentContent.style.transition = 'all 0.6s ease';
+      currentContent.style.opacity = '1';
+      currentContent.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 100);
+  }
+  
+  // 자동 슬라이드 재시작
+  pauseAutoSlide();
+  startAutoSlide();
 }
 
 // 브랜드 박스 애니메이션(스크롤에 따라)

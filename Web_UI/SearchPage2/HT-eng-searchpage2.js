@@ -25,15 +25,18 @@ function toggleFilters() {
     const filterArea = document.getElementById('filterArea');
     const toggleText = document.getElementById('toggleText');
     const toggleIcon = document.getElementById('toggleIcon');
+    const resetArea = document.querySelector('.reset-area');
 
     if (filterArea.classList.contains('expanded')) {
         filterArea.classList.remove('expanded');
         toggleText.textContent = '필터 보기';
         toggleIcon.style.transform = 'rotate(0deg)';
+        resetArea.style.display = 'none';
     } else {
         filterArea.classList.add('expanded');
         toggleText.textContent = '필터 숨기기';
         toggleIcon.style.transform = 'rotate(180deg)';
+        resetArea.style.display = 'block';
     }
 }
 
@@ -65,18 +68,73 @@ function setFilter(key, value) {
     // 버튼 활성화 상태 업데이트
     updateFilterButtons(key, value);
 
+    // 통신여부가 '비통신'일 때 통신종류 필터 비활성화
+    if (key === '통신여부') {
+        if (value === '비통신') {
+            filters['통신종류'] = '불가';
+            updateFilterButtons('통신종류', '불가');
+            disableFilterGroup('통신종류');
+        } else if (value === '통신') {
+            enableFilterGroup('통신종류');
+        }
+    }
+
     search();
 }
 
 // 필터 버튼 활성화 상태 업데이트
 function updateFilterButtons(key, value) {
-    const buttons = document.querySelectorAll(`[onclick*="${key}"]`);
-    buttons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('onclick').includes(value)) {
-            btn.classList.add('active');
-        }
+    const buttons = document.querySelectorAll(`.filter-group .filter-btn[onclick*="setFilter('${key}',"]`);
+
+    // 모두 비활성화
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // 정확히 일치하는 버튼만 활성화
+    const exactMatchPattern = new RegExp(`setFilter\\('${escapeRegex(key)}'\\s*,\\s*'${escapeRegex(value)}'\\)`);
+    const exact = Array.from(buttons).find(btn => {
+        const onclick = btn.getAttribute('onclick') || '';
+        return exactMatchPattern.test(onclick);
     });
+    if (exact) exact.classList.add('active');
+}
+
+// 정규식 이스케이프
+function escapeRegex(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// 필터 그룹 비활성화
+function disableFilterGroup(filterKey) {
+    const filterGroup = document.querySelector(`[onclick*="setFilter('${filterKey}',"]`).closest('.filter-group');
+    if (filterGroup) {
+        filterGroup.style.opacity = '0.5';
+        filterGroup.style.pointerEvents = 'none';
+    }
+}
+
+// 필터 그룹 활성화
+function enableFilterGroup(filterKey) {
+    const filterGroup = document.querySelector(`[onclick*="setFilter('${filterKey}',"]`).closest('.filter-group');
+    if (filterGroup) {
+        filterGroup.style.opacity = '1';
+        filterGroup.style.pointerEvents = 'auto';
+    }
+}
+
+// 필터 초기화
+function resetFilters() {
+    Object.keys(filters).forEach(key => {
+        filters[key] = '모든 조건';
+        updateFilterButtons(key, '모든 조건');
+    });
+
+    // 모든 필터 그룹 활성화
+    enableFilterGroup('통신종류');
+
+    // 현재 검색 결과 초기화
+    currentResults = [];
+    const resultGrid = document.getElementById('resultGrid');
+    resultGrid.innerHTML = '';
 }
 
 // 현재 결과 저장

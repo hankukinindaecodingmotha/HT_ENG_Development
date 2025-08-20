@@ -30,9 +30,5 @@
     ],
     "env": {
         "NODE_ENV": "production"
-    },
-    "domains": [
-        "hteng.co.kr",
-        "www.hteng.co.kr"
-    ]
+    }
 }

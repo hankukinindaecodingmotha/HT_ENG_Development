@@ -17,6 +17,49 @@
   <script src="admin-members.js"></script>
   <script src="admin-intro-pages.js"></script>
   <script src="admin-mainpage.js"></script>
+
+  <script>
+    // 로그인 상태 확인
+    function checkAuth() {
+      console.log('인증 확인 시작...');
+
+      const token = sessionStorage.getItem('auth_token');
+      const userInfo = sessionStorage.getItem('user_info');
+
+      console.log('저장된 토큰:', token);
+      console.log('저장된 사용자 정보:', userInfo);
+      console.log('세션 스토리지 사용 가능:', typeof sessionStorage !== 'undefined');
+
+      if (!token || !userInfo) {
+        console.log('토큰 또는 사용자 정보 없음, 로그인 페이지로 리다이렉트');
+        window.location.href = 'HT_eng-Admin-Login.html';
+        return;
+      }
+
+      try {
+        const user = JSON.parse(userInfo);
+        console.log('파싱된 사용자 정보:', user);
+
+        if (user.role !== 'admin') {
+          console.log('관리자 권한 없음, 로그인 페이지로 리다이렉트');
+          alert('관리자 권한이 필요합니다.');
+          sessionStorage.clear();
+          window.location.href = 'HT_eng-Admin-Login.html';
+          return;
+        }
+
+        console.log('인증 확인 성공, 관리자 권한 확인됨');
+      } catch (error) {
+        console.error('사용자 정보 파싱 오류:', error);
+        sessionStorage.clear();
+        window.location.href = 'HT_eng-Admin-Login.html';
+        return;
+      }
+    }
+
+    // 페이지 로드 시 인증 확인
+    document.addEventListener('DOMContentLoaded', checkAuth);
+  </script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -50,6 +93,35 @@
       margin: 10px 0 0 0;
       opacity: 0.9;
       font-size: 1.1em;
+    }
+
+    .admin-user-info {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .admin-user-info span {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
     .admin-nav {
@@ -323,6 +395,7 @@
     <section class="admin-actions">
       <h2>관리 기능</h2>
       <div class="action-grid">
+
         <div class="action-card" onclick="showUserManagement()">
           <i class="fas fa-user-cog"></i>
           <h3>사용자 관리</h3>
@@ -345,6 +418,10 @@
         </div>
       </div>
     </section>
+
+
+
+
 
     <!-- 사용자 관리 섹션 -->
     <section class="user-management" id="userManagement" style="display: none;">
@@ -828,7 +905,7 @@
 
       if (!token || role !== 'admin') {
         alert('관리자 권한이 필요한 페이지입니다.');
-        window.location.href = '../LoginPage/HT-eng-Login.html';
+        window.location.href = 'HT_eng-Admin-Login.html';
         return;
       }
     });

@@ -58,7 +58,7 @@ function renderAuthUI() {
     const username = sessionStorage.getItem('auth_user') || '사용자';
 
     if (!token) {
-        authArea.innerHTML = `<a href="${WEB_ROOT}/LoginPage/HT-eng-Login.html">로그인</a>`;
+        authArea.innerHTML = `<a href="${WEB_ROOT}/Admin/HT_eng-Admin-Login.html">관리자</a>`;
         return;
     }
 
@@ -98,7 +98,7 @@ function renderAuthUI() {
 
     logoutBtn?.addEventListener('click', () => {
         sessionStorage.clear();
-        window.location.href = `${WEB_ROOT}/LoginPage/HT-eng-Login.html`;
+        window.location.href = `${WEB_ROOT}/Admin/HT_eng-Admin-Login.html`;
     });
 }
 
@@ -171,7 +171,7 @@ function loadHeader() {
         <header class="top-bar">
           <div class="top-bar-left"><img src="${WEB_ROOT}/Assesets/Image/HT_ENG.png" class="logo" alt="로고"/></div>
           <div class="top-bar-center"></div>
-          <div class="top-bar-right"><span id="authArea"><a href="${WEB_ROOT}/LoginPage/HT-eng-Login.html">로그인</a></span></div>
+          <div class="top-bar-right"><span id="authArea"><a href="${WEB_ROOT}/Admin/HT_eng-Admin-Login.html">관리자</a></span></div>
         </header>`;
             renderAuthUI();
         });

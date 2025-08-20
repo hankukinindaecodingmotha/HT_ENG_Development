@@ -15,7 +15,7 @@ node server.js
 ### 2. 웹사이트 접속
 - **홈페이지**: `/Web_UI/HomePage/HT-eng-HomePage.html`
 - **관리자 페이지**: `/Web_UI/Admin/HT_eng-Admin.html`
-- **로그인 페이지**: `/Web_UI/LoginPage/HT-eng-Login.html`
+- **관리자 로그인 페이지**: `/Web_UI/Admin/HT_eng-Admin-Login.html`
 - **CEO 소개 페이지**: `/Web_UI/CEOPage/HT_eng-ceo.html`
 - **회사 구성원 페이지**: `/Web_UI/Members/HT_eng-members.html`
 - **회사 소개 페이지**: `/Web_UI/Company/HT_eng-Company.html`
@@ -143,7 +143,7 @@ HT_Eng_Project/
 ## 🧪 테스트 방법
 
 1. **서버 실행**: `cd Server && node server.js`
-2. **로그인 페이지 접속**: `/Web_UI/LoginPage/HT-eng-Login.html`
+2. **관리자 로그인 페이지 접속**: `/Web_UI/Admin/HT_eng-Admin-Login.html`
 3. **관리자 로그인**: `admin` / `admin1234`
 4. **관리자 페이지 접속**: 자동으로 리다이렉트됨
 5. **콘텐츠 관리 테스트**:

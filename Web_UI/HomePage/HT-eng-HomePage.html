@@ -15,9 +15,78 @@
   <div id="header-container"></div>
 
   <main class="content" id="top">
-    <!-- 배너 -->
-    <section class="banner-fullscreen">
-      <img id="bannerImage" src="../Assesets/Image/회사 배너.png" alt="HTeng 사진" />
+    <!-- 배너 슬라이더 -->
+    <section class="banner-slider">
+      <div class="slider-container">
+        <div class="slider-track" id="sliderTrack">
+          <div class="slide active">
+            <img src="../Assesets/Image/회사 배너1.png" alt="HTeng 회사 배너 1" />
+            <div class="slide-content">
+              <h2>HTeng에 오신 것을 환영합니다</h2>
+              <p>전문적인 전기 보호 장치 솔루션을 제공하는 HTeng입니다</p>
+              <a href="../Company/HT_eng-Company.html" class="cta-button">자세히 보기</a>
+            </div>
+          </div>
+          <div class="slide">
+            <img src="../Assesets/Image/회사 배너2.png" alt="HTeng 회사 배너 2" />
+            <div class="slide-content">
+              <h2>최고 품질의 제품</h2>
+              <p>Schneider, Eaton, Legrand 등 글로벌 브랜드 제품을 공급합니다</p>
+              <a href="../Product/HT_eng-EOCR.html" class="cta-button">제품 보기</a>
+            </div>
+          </div>
+          <div class="slide">
+            <img src="../Assesets/Image/회사 배너3.png" alt="HTeng 회사 배너 3" />
+            <div class="slide-content">
+              <h2>전문 기술 지원</h2>
+              <p>설치부터 유지보수까지 전문적인 기술 지원을 제공합니다</p>
+              <a href="../Support/HT_eng-support.html" class="cta-button">지원 문의</a>
+            </div>
+          </div>
+          <div class="slide">
+            <img src="../Assesets/Image/회사 배너4.png" alt="HTeng 회사 배너 4" />
+            <div class="slide-content">
+              <h2>신뢰할 수 있는 파트너</h2>
+              <p>20년 이상의 경험과 전문성을 바탕으로 고객과 함께 성장합니다</p>
+              <a href="../Company/HT_eng-Company.html" class="cta-button">회사 소개</a>
+            </div>
+          </div>
+          <div class="slide">
+            <img src="../Assesets/Image/회사 배너5.png" alt="HTeng 회사 배너 5" />
+            <div class="slide-content">
+              <h2>맞춤형 솔루션</h2>
+              <p>고객의 요구사항에 맞는 최적의 전기 보호 시스템을 설계합니다</p>
+              <a href="../Contact/HT_eng-contact.html" class="cta-button">솔루션 문의</a>
+            </div>
+          </div>
+          <div class="slide">
+            <img src="../Assesets/Image/회사 배너6.png" alt="HTeng 회사 배너 6" />
+            <div class="slide-content">
+              <h2>글로벌 네트워크</h2>
+              <p>전 세계 주요 제조업체와의 파트너십으로 최신 기술을 제공합니다</p>
+              <a href="../Support/HT_eng-support.html" class="cta-button">파트너십</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 슬라이더 네비게이션 버튼 -->
+        <button class="slider-btn prev-btn" onclick="changeSlide(-1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slider-btn next-btn" onclick="changeSlide(1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- 슬라이더 인디케이터 -->
+        <div class="slider-indicators" id="sliderIndicators">
+          <span class="indicator active" onclick="goToSlide(0)"></span>
+          <span class="indicator" onclick="goToSlide(1)"></span>
+          <span class="indicator" onclick="goToSlide(2)"></span>
+          <span class="indicator" onclick="goToSlide(3)"></span>
+          <span class="indicator" onclick="goToSlide(4)"></span>
+          <span class="indicator" onclick="goToSlide(5)"></span>
+        </div>
+      </div>
     </section>
 
     <!-- 브랜드 박스 -->
@@ -153,7 +222,7 @@
           })
           .catch(function () {
             // 에러 시 최소한의 헤더만 표시
-            container.innerHTML = '<header class="top-bar"><div class="top-bar-left"><img src="../Assesets/Image/HT_ENG.png" class="logo" alt="로고"/></div><div class="top-bar-center"></div><div class="top-bar-right"><span id="authArea"><a href="../LoginPage/HT-eng-Login.html">로그인</a></span></div></header>';
+            container.innerHTML = '<header class="top-bar"><div class="top-bar-left"><img src="../Assesets/Image/HT_ENG.png" class="logo" alt="로고"/></div><div class="top-bar-center"></div><div class="top-bar-right"><span id="authArea"><a href="../Admin/HT_eng-Admin-Login.html">관리자</a></span></div></header>';
           });
       }, 100);
     });

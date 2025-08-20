@@ -30,9 +30,11 @@ app.use(express.json());
 if (NODE_ENV === 'production') {
     app.use('/assets', express.static(path.join(__dirname, '../Web_UI/Assesets')));
     app.use('/images', express.static(path.join(__dirname, '../Web_UI/Assesets/Image')));
+    app.use('/Web_UI', express.static(path.join(__dirname, '../Web_UI')));
 } else {
     app.use('/assets', express.static(path.join(__dirname, '../Web_UI/Assesets')));
     app.use('/images', express.static(path.join(__dirname, '../Web_UI/Assesets/Image')));
+    app.use('/Web_UI', express.static(path.join(__dirname, '../Web_UI')));
 }
 
 let eocrProducts = [];
@@ -47,109 +49,6 @@ let users = [
         status: 'active',
         email: 'admin@hteng.com',
         joinDate: '2024-01-01'
-    },
-    // 활성 사용자들 (비밀번호: user1234)
-    {
-        id: 'user1',
-        username: 'user1',
-        displayName: '김영희',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'active',
-        email: 'user1@hteng.com',
-        joinDate: '2024-01-15'
-    },
-    {
-        id: 'user2',
-        username: 'user2',
-        displayName: '박민수',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'active',
-        email: 'user2@hteng.com',
-        joinDate: '2024-01-20'
-    },
-    {
-        id: 'user3',
-        username: 'user3',
-        displayName: '이지영',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'active',
-        email: 'user3@hteng.com',
-        joinDate: '2024-01-25'
-    },
-    // 승인 대기 사용자들
-    {
-        id: 'user4',
-        username: 'user4',
-        displayName: '최준호',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'pending',
-        email: 'user4@hteng.com',
-        joinDate: '2024-02-01'
-    },
-    {
-        id: 'user5',
-        username: 'user5',
-        displayName: '정수진',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'pending',
-        email: 'user5@hteng.com',
-        joinDate: '2024-02-05'
-    },
-    {
-        id: 'user6',
-        username: 'user6',
-        displayName: '한동훈',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'pending',
-        email: 'user6@hteng.com',
-        joinDate: '2024-02-10'
-    },
-    // 비활성 사용자들
-    {
-        id: 'user7',
-        username: 'user7',
-        displayName: '송미라',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'inactive',
-        email: 'user7@hteng.com',
-        joinDate: '2024-01-30'
-    },
-    {
-        id: 'user8',
-        username: 'user8',
-        displayName: '강태우',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'inactive',
-        email: 'user8@hteng.com',
-        joinDate: '2024-02-03'
-    },
-    {
-        id: 'user9',
-        username: 'user9',
-        displayName: '윤서연',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'inactive',
-        email: 'user9@hteng.com',
-        joinDate: '2024-02-08'
-    },
-    {
-        id: 'user10',
-        username: 'user10',
-        displayName: '임재현',
-        passwordHash: bcrypt.hashSync('user1234', 10),
-        role: 'user',
-        status: 'inactive',
-        email: 'user10@hteng.com',
-        joinDate: '2024-02-12'
     }
 ];
 
@@ -416,25 +315,16 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // 사용자 찾기
-        const user = users.find(u => u.username === username);
+        // 관리자만 로그인 가능
+        const user = users.find(u => u.username === username && u.role === 'admin');
         if (!user) {
-            return res.status(401).json({ message: '사용자명 또는 비밀번호가 올바르지 않습니다.' });
+            return res.status(401).json({ message: '관리자 계정만 로그인할 수 있습니다.' });
         }
 
         // 비밀번호 확인
         const isValidPassword = await bcrypt.compare(password, user.passwordHash);
         if (!isValidPassword) {
             return res.status(401).json({ message: '사용자명 또는 비밀번호가 올바르지 않습니다.' });
-        }
-
-        // 사용자 상태 확인
-        if (user.status === 'inactive') {
-            return res.status(401).json({ message: '비활성화된 계정입니다. 관리자에게 문의하세요.' });
-        }
-
-        if (user.status === 'pending') {
-            return res.status(401).json({ message: '승인 대기 중인 계정입니다. 관리자 승인을 기다려주세요.' });
         }
 
         // JWT 토큰 생성
@@ -465,18 +355,6 @@ app.post('/api/auth/login', async (req, res) => {
 // 사용자 목록 조회
 app.get('/api/admin/users', authenticateToken, requireAdmin, (req, res) => {
     try {
-        console.log('=== 사용자 목록 조회 요청 받음 ===');
-        console.log('요청 사용자 ID:', req.user.id);
-        console.log('요청 사용자 역할:', req.user.role);
-        console.log('전체 사용자 배열:', users);
-        console.log('사용자 수:', users.length);
-
-        if (users.length === 0) {
-            console.log('⚠️ 사용자 배열이 비어있습니다!');
-        } else {
-            console.log('첫 번째 사용자 예시:', users[0]);
-        }
-
         const userList = users.map(user => ({
             id: user.id,
             username: user.username,
@@ -486,9 +364,6 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, (req, res) => {
             email: user.email || '',
             joinDate: user.joinDate || new Date().toISOString().split('T')[0]
         }));
-
-        console.log('변환된 사용자 목록:', userList);
-        console.log('응답할 사용자 수:', userList.length);
 
         res.json(userList);
     } catch (error) {
@@ -589,8 +464,8 @@ app.put('/api/admin/users/:userId', authenticateToken, requireAdmin, async (req,
             }
         });
     } catch (error) {
-        console.error('사용자 수정 실패:', error);
-        res.status(500).json({ message: '사용자 수정에 실패했습니다.' });
+        console.error('사용자 정보 수정 실패:', error);
+        res.status(500).json({ message: '사용자 정보 수정에 실패했습니다.' });
     }
 });
 
@@ -669,6 +544,12 @@ app.delete('/api/admin/users/:userId', authenticateToken, requireAdmin, (req, re
         res.status(500).json({ message: '사용자 삭제에 실패했습니다.' });
     }
 });
+
+
+
+
+
+
 
 // 관리자 대시보드 통계
 app.get('/api/admin/summary', authenticateToken, requireAdmin, (req, res) => {

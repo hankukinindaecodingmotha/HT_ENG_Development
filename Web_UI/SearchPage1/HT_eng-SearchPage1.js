@@ -31,20 +31,143 @@ let recentSearches = [];
 // 현재 뷰 모드
 let currentViewMode = 'grid-4';
 
-// 서버 검색 함수
+// 필터 상태
+const filters = {
+  AC_DC: '모든 조건',
+  제품군: '모든 조건',
+  보호종류: '모든 조건',
+  통신여부: '모든 조건',
+  통신종류: '모든 조건',
+  '누설(지락)': '모든 조건',
+  단락: '모든 조건',
+  '과전류/저전류': '모든 조건',
+  결상: '모든 조건',
+  역상: '모든 조건',
+  '과전압/저전압': '모든 조건',
+  전력: '모든 조건',
+  '내장 ZCT': '모든 조건'
+};
+
+// 필터 토글
+function toggleFilters() {
+  const filterArea = document.getElementById('filterArea');
+  const toggleText = document.getElementById('toggleText');
+  const toggleIcon = document.getElementById('toggleIcon');
+  const resetArea = document.querySelector('.reset-area');
+  if (filterArea.classList.contains('expanded')) {
+    filterArea.classList.remove('expanded');
+    toggleText.textContent = '필터 보기';
+    toggleIcon.style.transform = 'rotate(0deg)';
+    resetArea.style.display = 'none';
+  } else {
+    filterArea.classList.add('expanded');
+    toggleText.textContent = '필터 숨기기';
+    toggleIcon.style.transform = 'rotate(180deg)';
+    resetArea.style.display = 'block';
+  }
+}
+
+// 필터 설정
+function setFilter(key, value) {
+  filters[key] = value;
+  updateFilterButtons(key, value);
+
+  // 통신여부가 '비통신'일 때 통신종류 필터 비활성화
+  if (key === '통신여부') {
+    if (value === '비통신') {
+      filters['통신종류'] = '불가';
+      updateFilterButtons('통신종류', '불가');
+      disableFilterGroup('통신종류');
+    } else if (value === '통신') {
+      enableFilterGroup('통신종류');
+    }
+  }
+
+  performSearch();
+}
+
+function updateFilterButtons(key, value) {
+  const buttons = document.querySelectorAll(`.filter-group .filter-btn[onclick*="setFilter('${key}',"]`);
+
+  // 모두 비활성화
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // 정확히 일치하는 버튼만 활성화 (부분 일치 방지: '가능' vs '불가능' 등)
+  const exactMatchPattern = new RegExp(`setFilter\\('${escapeRegex(key)}'\\s*,\\s*'${escapeRegex(value)}'\\)`);
+  const exact = Array.from(buttons).find(btn => {
+    const onclick = btn.getAttribute('onclick') || '';
+    return exactMatchPattern.test(onclick);
+  });
+  if (exact) exact.classList.add('active');
+}
+
+// 정규식 이스케이프 유틸리티
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// 필터 그룹 비활성화
+function disableFilterGroup(filterKey) {
+  const filterGroup = document.querySelector(`[onclick*="setFilter('${filterKey}',"]`).closest('.filter-group');
+  if (filterGroup) {
+    filterGroup.style.opacity = '0.5';
+    filterGroup.style.pointerEvents = 'none';
+  }
+}
+
+// 필터 그룹 활성화
+function enableFilterGroup(filterKey) {
+  const filterGroup = document.querySelector(`[onclick*="setFilter('${filterKey}',"]`).closest('.filter-group');
+  if (filterGroup) {
+    filterGroup.style.opacity = '1';
+    filterGroup.style.pointerEvents = 'auto';
+  }
+}
+
+// 필터 초기화
+function resetFilters() {
+  Object.keys(filters).forEach(key => {
+    filters[key] = '모든 조건';
+    updateFilterButtons(key, '모든 조건');
+  });
+
+  // 모든 필터 그룹 활성화
+  enableFilterGroup('통신종류');
+
+  // 검색어 없이 필터 초기화만 했으면 결과를 리셋
+  const resultGrid = document.getElementById('serverResultGrid');
+  const resultContainer = document.getElementById('serverResultContainer');
+  resultGrid.innerHTML = '';
+  resultContainer.classList.remove('show');
+}
+
+// 활성 필터 존재 여부 확인
+function hasActiveFilters() {
+  return Object.keys(filters).some(key => filters[key] && filters[key] !== '모든 조건');
+}
+
+// 서버 검색 함수 (필터 적용)
 function performSearch() {
   const query = input.value.trim();
 
-  if (!query) {
-    alert('검색어를 입력해주세요.');
+  // 키워드도 없고 활성 필터도 없으면 경고
+  if (!query && !hasActiveFilters()) {
+    alert('검색어를 입력하거나 필터를 선택해주세요.');
     return;
   }
 
-  // 최근 검색어에 추가
-  updateRecentSearches(query);
+  // 키워드가 있으면 최근 검색어에 추가
+  if (query) updateRecentSearches(query);
 
-  // 서버 API 호출
-  fetch(`http://localhost:3000/api/products/filter?제품명=${encodeURIComponent(query)}`)
+  const params = new URLSearchParams();
+  if (query) params.append('제품명', query);
+  Object.keys(filters).forEach(key => {
+    if (filters[key] && filters[key] !== '모든 조건') {
+      params.append(key, filters[key]);
+    }
+  });
+
+  fetch(`http://localhost:3000/api/products/filter?${params.toString()}`)
     .then(res => res.json())
     .then(data => {
       displayServerResults(data);
@@ -54,7 +177,6 @@ function performSearch() {
       alert('서버 연결에 실패했습니다. 서버가 실행 중인지 확인해주세요.');
     });
 
-  // 연관검색어 박스 숨기기
   suggestions.style.display = 'none';
 }
 
@@ -74,7 +196,7 @@ function displayServerResults(data) {
   data.forEach(item => {
     const card = document.createElement('div');
     card.className = 'product-card';
-    card.onclick = () => showProductDetail(item);
+    card.onclick = () => showProductModal(item);
 
     // 제품 이미지 (실제 이미지가 없으므로 플레이스홀더)
     const imageDiv = document.createElement('div');
@@ -93,8 +215,36 @@ function displayServerResults(data) {
     descDiv.className = 'product-description';
     descDiv.textContent = item.상세설명;
 
+    // 액션 버튼 영역 생성
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'product-actions';
+
+    // PDF 다운로드 버튼
+    const pdfBtn = document.createElement('a');
+    pdfBtn.className = 'action-btn';
+    pdfBtn.href = '#';
+    pdfBtn.onclick = (e) => {
+      e.preventDefault();
+      downloadPDF(item.제품);
+    };
+    pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> PDF';
+
+    // 브랜드 사이트 버튼
+    const brandBtn = document.createElement('a');
+    brandBtn.className = 'action-btn';
+    brandBtn.href = '#';
+    brandBtn.onclick = (e) => {
+      e.preventDefault();
+      openBrandSite(item.제품);
+    };
+    brandBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> 브랜드';
+
+    actionsDiv.appendChild(pdfBtn);
+    actionsDiv.appendChild(brandBtn);
+
     infoDiv.appendChild(nameDiv);
     infoDiv.appendChild(descDiv);
+    infoDiv.appendChild(actionsDiv);
 
     card.appendChild(imageDiv);
     card.appendChild(infoDiv);
@@ -105,11 +255,138 @@ function displayServerResults(data) {
   resultContainer.classList.add('show');
 }
 
-// 제품 상세 페이지로 이동 (제품명 전달)
-function showProductDetail(item) {
-  const name = item?.제품;
-  if (!name) return;
-  window.location.href = `../ProductPage/ProductDetailPage/HT_eng-ProductDetail.html?name=${encodeURIComponent(name)}`;
+
+
+// PDF 다운로드 함수
+function downloadPDF(productName) {
+  // 실제 PDF 파일 경로나 API 엔드포인트로 대체 가능
+  alert(`${productName}의 PDF를 다운로드합니다.`);
+  // 예시: window.open(`/api/products/${productName}/pdf`);
+}
+
+// 브랜드 사이트 열기 함수
+function openBrandSite(productName) {
+  // 실제 브랜드 사이트 URL로 대체 가능
+  alert(`${productName}의 브랜드 사이트를 엽니다.`);
+  // 예시: window.open('https://brand-site.com', '_blank');
+}
+
+// 제품 모달 표시
+function showProductModal(item) {
+  const modal = document.getElementById('productModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalImage = document.getElementById('modalImage');
+  const modalSpecs = document.getElementById('modalSpecs');
+
+  // 모달 제목 설정
+  modalTitle.textContent = item.제품;
+
+  // 모달 이미지 설정
+  modalImage.textContent = item.제품.charAt(0);
+
+  // 스펙 정보 생성
+  modalSpecs.innerHTML = '';
+
+  // 주요 스펙들을 그룹으로 표시
+  const specGroups = [
+    {
+      title: '기본 정보',
+      specs: [
+        { label: '제품명', value: item.제품 },
+        { label: '상세설명', value: item.상세설명 }
+      ]
+    },
+    {
+      title: '전기적 특성',
+      specs: [
+        { label: 'AC/DC', value: item['AC or DC'] },
+        { label: '제품군', value: item.제품군 },
+        { label: '보호종류', value: item.보호종류 }
+      ]
+    },
+    {
+      title: '통신 기능',
+      specs: [
+        { label: '통신여부', value: item.통신여부 },
+        { label: '통신종류', value: item.통신종류 }
+      ]
+    },
+    {
+      title: '보호 기능',
+      specs: [
+        { label: '누설(지락)', value: item['누설(지락)'] },
+        { label: '단락', value: item.단락 },
+        { label: '과전류/저전류', value: item['과전류/저전류'] },
+        { label: '결상', value: item.결상 },
+        { label: '역상', value: item.역상 },
+        { label: '과전압/저전압', value: item['과전압/저전압'] }
+      ]
+    },
+    {
+      title: '기타',
+      specs: [
+        { label: '전력', value: item.전력 },
+        { label: '내장 ZCT', value: item['내장 ZCT'] }
+      ]
+    }
+  ];
+
+  specGroups.forEach(group => {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'spec-group';
+
+    const groupTitle = document.createElement('div');
+    groupTitle.className = 'spec-title';
+    groupTitle.textContent = group.title;
+
+    groupDiv.appendChild(groupTitle);
+
+    group.specs.forEach(spec => {
+      if (spec.value) {
+        const specDiv = document.createElement('div');
+        specDiv.className = 'spec-value';
+        specDiv.innerHTML = `<strong>${spec.label}:</strong> ${spec.value}`;
+        groupDiv.appendChild(specDiv);
+      }
+    });
+
+    modalSpecs.appendChild(groupDiv);
+  });
+
+  // 모달 표시
+  modal.style.display = 'block';
+
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeProductModal();
+    }
+  });
+
+  // 모달 외부 클릭 시 닫기
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      closeProductModal();
+    }
+  });
+}
+
+// 제품 모달 닫기
+function closeProductModal() {
+  const modal = document.getElementById('productModal');
+  modal.style.display = 'none';
+}
+
+// 모달에서 PDF 다운로드
+function downloadPDFFromModal() {
+  const productName = document.getElementById('modalTitle').textContent;
+  downloadPDF(productName);
+}
+
+// 모달에서 브랜드 사이트 열기
+function openBrandSiteFromModal() {
+  const productName = document.getElementById('modalTitle').textContent;
+  openBrandSite(productName);
 }
 
 // 뷰 모드 설정
