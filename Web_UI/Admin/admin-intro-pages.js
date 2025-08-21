@@ -120,7 +120,7 @@ function generateCeoForm(ceoData) {
         <h4>CEO 기본 정보</h4>
         <div class="form-row">
           <div class="form-group">
-            <label for="ceoName">CEO 이름</label>
+            <label for="ceoName">이름</label>
             <input type="text" id="ceoName" name="ceoName" value="${ceoData.name || ''}" required>
           </div>
           <div class="form-group">
@@ -129,20 +129,12 @@ function generateCeoForm(ceoData) {
           </div>
         </div>
         <div class="form-group">
-          <label for="ceoImage">이미지 파일명</label>
-          <input type="text" id="ceoImage" name="ceoImage" value="${ceoData.image || ''}" placeholder="CEO.jpeg">
-        </div>
-      </div>
-      
-      <div class="form-section">
-        <h4>CEO 인사말</h4>
-        <div class="form-group">
-          <label for="ceoIntroduction">인사말 내용</label>
-          <textarea id="ceoIntroduction" name="ceoIntroduction" rows="6" required>${ceoData.introduction || ''}</textarea>
+          <label for="ceoIntroduction">소개</label>
+          <textarea id="ceoIntroduction" name="ceoIntroduction" rows="4" required>${ceoData.introduction || ''}</textarea>
         </div>
         <div class="form-group">
           <label for="ceoVision">비전</label>
-          <textarea id="ceoVision" name="ceoVision" rows="3" required>${ceoData.vision || ''}</textarea>
+          <textarea id="ceoVision" name="ceoVision" rows="4" required>${ceoData.vision || ''}</textarea>
         </div>
       </div>
       
@@ -399,8 +391,7 @@ function collectFormData(pageType, formData) {
         name: formData.get('ceoName'),
         position: formData.get('ceoPosition'),
         introduction: formData.get('ceoIntroduction'),
-        vision: formData.get('ceoVision'),
-        image: formData.get('ceoImage')
+        vision: formData.get('ceoVision')
       };
     case 'members':
       const members = [];
@@ -412,7 +403,6 @@ function collectFormData(pageType, formData) {
           department: formData.get(`memberDepartment_${index}`),
           experience: formData.get(`memberExperience_${index}`),
           email: formData.get(`memberEmail_${index}`),
-          image: formData.get(`memberImage_${index}`),
           description: formData.get(`memberDescription_${index}`)
         };
         if (member.name && member.position && member.description) {
@@ -434,7 +424,7 @@ function collectFormData(pageType, formData) {
           history.push({ year, event });
         }
       });
-      
+
       const businessItems = [];
       const businessItemElements = document.querySelectorAll('#introBusinessList .business-item');
       businessItemElements.forEach((item, index) => {
@@ -444,7 +434,7 @@ function collectFormData(pageType, formData) {
           businessItems.push({ title, description });
         }
       });
-      
+
       return {
         title: formData.get('companyIntroTitle'),
         subtitle: formData.get('companyIntroSubtitle'),

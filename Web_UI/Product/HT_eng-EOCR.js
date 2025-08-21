@@ -19,6 +19,11 @@ let advancedFilters = {
 
 // 사이드바 메뉴 클릭 이벤트
 document.addEventListener('DOMContentLoaded', function () {
+  // 인증 상태 확인 및 유지
+  if (typeof maintainAuthState === 'function') {
+    maintainAuthState();
+  }
+
   // 사이드바 메뉴 이벤트 리스너 설정
   document.querySelectorAll('.sidebar-item').forEach(item => {
     item.addEventListener('click', function () {

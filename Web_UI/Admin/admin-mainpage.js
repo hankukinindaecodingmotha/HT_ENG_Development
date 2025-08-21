@@ -7,25 +7,24 @@ async function loadMainPageData() {
     if (response.ok) {
       const data = await response.json();
       populateMainPageForm(data);
-      alert('메인페이지 데이터를 성공적으로 불러왔습니다.');
+      console.log('메인페이지 데이터를 성공적으로 불러왔습니다.');
     } else {
       throw new Error('메인페이지 데이터를 불러올 수 없습니다.');
     }
   } catch (error) {
     console.error('Error loading main page data:', error);
-    alert('메인페이지 데이터를 불러올 수 없습니다.');
+    console.log('메인페이지 데이터를 불러올 수 없습니다. 서버가 실행 중인지 확인하세요.');
   }
 }
 
 // 폼에 데이터 채우기
 function populateMainPageForm(data) {
-  // CEO 정보
+  // CEO 정보 로드
   document.getElementById('ceoName').value = data.contact.ceo.name || '';
   document.getElementById('ceoPosition').value = data.contact.ceo.position || '';
   document.getElementById('ceoPhone').value = data.contact.ceo.phone || '';
   document.getElementById('ceoEmail').value = data.contact.ceo.email || '';
   document.getElementById('ceoAddress').value = data.contact.ceo.address || '';
-  document.getElementById('ceoImage').value = data.contact.ceo.image || '';
   renderExperience('ceoExperienceContainer', data.contact.ceo.experience);
 
   // Manager 정보
@@ -45,7 +44,7 @@ function populateMainPageForm(data) {
 function renderExperience(containerId, experience) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  
+
   container.innerHTML = '';
 
   if (experience && Array.isArray(experience)) {
@@ -69,7 +68,7 @@ function renderExperience(containerId, experience) {
 function renderDescriptions(descriptions) {
   const container = document.getElementById('descriptionsContainer');
   if (!container) return;
-  
+
   container.innerHTML = '';
 
   if (descriptions && Array.isArray(descriptions)) {
@@ -106,9 +105,9 @@ function renderDescriptions(descriptions) {
 function addExperience(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  
+
   const index = container.children.length;
-  
+
   const expDiv = document.createElement('div');
   expDiv.className = 'experience-item';
   expDiv.innerHTML = `
@@ -126,9 +125,9 @@ function addExperience(containerId) {
 function removeExperience(containerId, index) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  
+
   const expItems = container.querySelectorAll('.experience-item');
-  
+
   if (expItems[index]) {
     expItems[index].remove();
     reorderExperienceIndexes(containerId);
@@ -139,15 +138,15 @@ function removeExperience(containerId, index) {
 function reorderExperienceIndexes(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  
+
   const expItems = container.querySelectorAll('.experience-item');
-  
+
   expItems.forEach((item, newIndex) => {
     const input = item.querySelector('input');
     if (input) {
       input.name = `${containerId}_${newIndex}`;
     }
-    
+
     const removeBtn = item.querySelector('button');
     if (removeBtn) {
       removeBtn.onclick = () => removeExperience(containerId, newIndex);
@@ -159,9 +158,9 @@ function reorderExperienceIndexes(containerId) {
 function addDescription() {
   const container = document.getElementById('descriptionsContainer');
   if (!container) return;
-  
+
   const index = container.children.length;
-  
+
   const descDiv = document.createElement('div');
   descDiv.className = 'description-item';
   descDiv.innerHTML = `
@@ -192,9 +191,9 @@ function addDescription() {
 function removeDescription(index) {
   const container = document.getElementById('descriptionsContainer');
   if (!container) return;
-  
+
   const descItems = container.querySelectorAll('.description-item');
-  
+
   if (descItems[index]) {
     descItems[index].remove();
     reorderDescriptionIndexes();
@@ -205,9 +204,9 @@ function removeDescription(index) {
 function reorderDescriptionIndexes() {
   const container = document.getElementById('descriptionsContainer');
   if (!container) return;
-  
+
   const descItems = container.querySelectorAll('.description-item');
-  
+
   descItems.forEach((item, newIndex) => {
     const inputs = item.querySelectorAll('input, textarea');
     inputs.forEach(input => {
@@ -215,7 +214,7 @@ function reorderDescriptionIndexes() {
       const newName = name.replace(/_\d+/, `_${newIndex}`);
       input.name = newName;
     });
-    
+
     const removeBtn = item.querySelector('button');
     if (removeBtn) {
       removeBtn.onclick = () => removeDescription(newIndex);
@@ -227,7 +226,7 @@ function reorderDescriptionIndexes() {
 async function saveMainPageData() {
   try {
     const formData = collectMainPageFormData();
-    
+
     const response = await fetch('http://localhost:3000/api/admin/main-page', {
       method: 'PUT',
       headers: {
@@ -238,11 +237,11 @@ async function saveMainPageData() {
     });
 
     if (response.ok) {
-      alert('메인페이지가 성공적으로 저장되었습니다!');
-      
+              console.log('메인페이지가 성공적으로 저장되었습니다!');
+
       // 저장 후 즉시 홈페이지에 적용 확인
       await applyChangesToHomePage(formData);
-      
+
     } else {
       throw new Error('저장에 실패했습니다.');
     }
@@ -257,7 +256,7 @@ async function applyChangesToHomePage(data) {
   try {
     // 현재 열려있는 홈페이지 탭 찾기
     const homePageTab = window.open('../HomePage/HT-eng-HomePage.html', '_blank');
-    
+
     if (homePageTab) {
       // 홈페이지가 로드될 때까지 잠시 대기
       setTimeout(() => {
@@ -268,9 +267,9 @@ async function applyChangesToHomePage(data) {
         }, '*');
       }, 2000);
     }
-    
+
     alert('변경사항이 홈페이지에 즉시 적용되었습니다!');
-    
+
   } catch (error) {
     console.error('Error applying changes to home page:', error);
   }
@@ -285,7 +284,6 @@ function collectMainPageFormData() {
     phone: document.getElementById('ceoPhone').value,
     email: document.getElementById('ceoEmail').value,
     address: document.getElementById('ceoAddress').value,
-    image: document.getElementById('ceoImage').value,
     experience: collectExperience('ceoExperienceContainer')
   };
 
@@ -308,7 +306,7 @@ function collectMainPageFormData() {
     const image = item.querySelector('input[name^="descImage_"]').value;
     const alt = item.querySelector('input[name^="descAlt_"]').value;
     const content = item.querySelector('textarea[name^="descContent_"]').value;
-    
+
     if (title && image && content) {
       descriptions.push({ title, image, alt, content });
     }
@@ -325,20 +323,17 @@ function collectExperience(containerId) {
   const experience = [];
   const container = document.getElementById(containerId);
   if (!container) return experience;
-  
+
   const inputs = container.querySelectorAll('input');
-  
+
   inputs.forEach(input => {
     if (input.value.trim()) {
       experience.push(input.value.trim());
     }
   });
-  
+
   return experience;
 }
 
-// 페이지 로드 시 데이터 로드
-document.addEventListener('DOMContentLoaded', function() {
-  // 페이지 로드 시 자동으로 데이터 로드
-  loadMainPageData();
-});
+// 페이지 로드 시 자동 데이터 로드 비활성화
+// 필요시 수동으로 "데이터 불러오기" 버튼을 클릭하세요

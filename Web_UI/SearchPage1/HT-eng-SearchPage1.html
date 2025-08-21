@@ -58,10 +58,167 @@
         </div>
       </div>
 
+      <!-- 필터 토글 버튼 -->
+      <div class="filter-toggle">
+        <button class="toggle-btn" onclick="toggleFilters()">
+          <span id="toggleText">필터 보기</span>
+          <svg id="toggleIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 필터 영역 (접기/펼치기) -->
+      <div class="filter-area" id="filterArea">
+        <!-- AC/DC -->
+        <div class="filter-group">
+          <span class="filter-label">AC/DC:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('AC_DC', 'AC')">AC</button>
+            <button class="filter-btn" onclick="setFilter('AC_DC', 'DC')">DC</button>
+            <button class="filter-btn active" onclick="setFilter('AC_DC', '모든 조건')">모든 조건</button>
+          </div>
+        </div>
+
+        <!-- 제품군 -->
+        <div class="filter-group">
+          <span class="filter-label">제품군:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('제품군', 'Analog')">Analog</button>
+            <button class="filter-btn" onclick="setFilter('제품군', 'Digital')">Digital</button>
+            <button class="filter-btn" onclick="setFilter('제품군', 'Accessory')">Accessory</button>
+            <button class="filter-btn active" onclick="setFilter('제품군', '모든 조건')">모든 조건</button>
+          </div>
+        </div>
+
+        <!-- 보호종류 -->
+        <div class="filter-group">
+          <span class="filter-label">보호종류:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('보호종류', '전류')">전류</button>
+            <button class="filter-btn active" onclick="setFilter('보호종류', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 통신여부 -->
+        <div class="filter-group">
+          <span class="filter-label">통신여부:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('통신여부', '비통신')">비통신</button>
+            <button class="filter-btn" onclick="setFilter('통신여부', '통신')">통신</button>
+            <button class="filter-btn active" onclick="setFilter('통신여부', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 통신종류 -->
+        <div class="filter-group">
+          <span class="filter-label">통신종류:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('통신종류', '4-20mA')">4-20mA</button>
+            <button class="filter-btn" onclick="setFilter('통신종류', '불가')">불가</button>
+            <button class="filter-btn" onclick="setFilter('통신종류', 'Modbus-RTU(RS485)')">Modbus-RTU(RS485)</button>
+            <button class="filter-btn"
+              onclick="setFilter('통신종류', 'Modbus-RTU(RS485)/4-20mA')">Modbus-RTU(RS485)/4-20mA</button>
+            <button class="filter-btn" onclick="setFilter('통신종류', 'TCP(Eternet)')">TCP(Ethernet)</button>
+            <button class="filter-btn"
+              onclick="setFilter('통신종류', 'Modbus-RTU(RS485)/TCP(Eternet)/4-20mA')">Modbus-RTU(RS485)/TCP(Ethernet)/4-20mA</button>
+            <button class="filter-btn active" onclick="setFilter('통신종류', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 내장 ZCT -->
+        <div class="filter-group">
+          <span class="filter-label">내장 ZCT:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('내장 ZCT', 'O')">내장</button>
+            <button class="filter-btn" onclick="setFilter('내장 ZCT', 'X')">미내장</button>
+            <button class="filter-btn active" onclick="setFilter('내장 ZCT', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 과전류/저전류 -->
+        <div class="filter-group">
+          <span class="filter-label">과전류/저전류:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('과전류/저전류', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('과전류/저전류', '불가')">불가</button>
+            <button class="filter-btn" onclick="setFilter('과전류/저전류', '과전류')">과전류</button>
+            <button class="filter-btn" onclick="setFilter('과전류/저전류', '모든조건')">모든조건</button>
+            <button class="filter-btn active" onclick="setFilter('과전류/저전류', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 결상 -->
+        <div class="filter-group">
+          <span class="filter-label">결상:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('결상', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('결상', '불가')">불가</button>
+            <button class="filter-btn active" onclick="setFilter('결상', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 역상 -->
+        <div class="filter-group">
+          <span class="filter-label">역상:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('역상', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('역상', '불가')">불가</button>
+            <button class="filter-btn active" onclick="setFilter('역상', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 누설(지락) -->
+        <div class="filter-group">
+          <span class="filter-label">누설(지락):</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('누설(지락)', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('누설(지락)', '불가')">불가</button>
+            <button class="filter-btn active" onclick="setFilter('누설(지락)', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 단락 -->
+        <div class="filter-group">
+          <span class="filter-label">단락:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('단락', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('단락', '불가')">불가</button>
+            <button class="filter-btn active" onclick="setFilter('단락', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 과전압/저전압 -->
+        <div class="filter-group">
+          <span class="filter-label">과전압/저전압:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('과전압/저전압', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('과전압/저전압', '불가')">불가</button>
+            <button class="filter-btn active" onclick="setFilter('과전압/저전압', '모든조건')">모든조건</button>
+          </div>
+        </div>
+
+        <!-- 전력 -->
+        <div class="filter-group">
+          <span class="filter-label">전력:</span>
+          <div class="filter-buttons">
+            <button class="filter-btn" onclick="setFilter('전력', '가능')">가능</button>
+            <button class="filter-btn" onclick="setFilter('전력', '불가')">불가</button>
+            <button class="filter-btn active" onclick="setFilter('전력', '모든조건')">모든조건</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 필터 초기화 버튼 -->
+      <div class="reset-area">
+        <button class="reset-btn" onclick="resetFilters()">필터 초기화</button>
+      </div>
+
       <!-- 서버 검색 결과 영역 -->
       <div class="server-result-container" id="serverResultContainer">
         <div class="result-header">
-          <h3>서버 검색 결과</h3>
+          <h3>검색 결과</h3>
           <div class="view-toggle">
             <button class="view-btn active" onclick="setViewMode('grid-4')">4열</button>
             <button class="view-btn" onclick="setViewMode('grid-8')">8열</button>
@@ -89,7 +246,63 @@
 
   </div>
 
+  <!-- 제품 상세 모달 -->
+  <div id="productModal" class="product-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">제품명</h2>
+        <button class="close-modal" onclick="closeProductModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-image">
+          <div class="modal-image-placeholder" id="modalImage">제품</div>
+        </div>
+        <div class="modal-specs" id="modalSpecs">
+          <!-- 스펙 정보가 여기에 동적으로 추가됩니다 -->
+        </div>
+      </div>
+      <div class="modal-actions">
+        <a href="#" class="modal-action-btn catalog" id="modalCatalogBtn" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-file-pdf"></i> 카탈로그
+        </a>
+        <a href="#" class="modal-action-btn purchase" id="modalPurchaseBtn" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-shopping-cart"></i> 구매
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 연락처 모달 -->
+  <div id="contactModal" class="contact-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">연락처</h2>
+        <button class="close-modal" onclick="closeContactModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <div class="contact-details">
+              <h3>대표 전화</h3>
+              <p>010-3077-4767</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <div class="contact-details">
+              <h3>대표 이메일</h3>
+              <p>hteng@hteng.co.kr</p>
+              <p>tag-young.jung@hteng.co.kr</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 검색 관련 자바스크립트 파일 연결 -->
+  <script src="../Components/Header/auth-common.js"></script>
   <script src="HT_eng-SearchPage1.js"></script>
 
   <!-- 푸터 -->
