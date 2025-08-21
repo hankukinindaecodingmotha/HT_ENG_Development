@@ -15,16 +15,14 @@ async function loadCeoInfo() {
       const ceoInfo = await response.json();
       console.log('로드된 CEO 정보:', ceoInfo);
 
-      // CEO 폼에 데이터 반영
+      // CEO 폼에 데이터 반영 (이미지 필드 제거)
       const ceoNameInput = document.getElementById('ceoName');
       const ceoPositionInput = document.getElementById('ceoPosition');
-      const ceoImageInput = document.getElementById('ceoImage');
       const ceoIntroductionInput = document.getElementById('ceoIntroduction');
       const ceoVisionInput = document.getElementById('ceoVision');
 
       if (ceoNameInput) ceoNameInput.value = ceoInfo.name || '';
       if (ceoPositionInput) ceoPositionInput.value = ceoInfo.position || '';
-      if (ceoImageInput) ceoImageInput.value = ceoInfo.image || '';
       if (ceoIntroductionInput) ceoIntroductionInput.value = ceoInfo.introduction || '';
       if (ceoVisionInput) ceoVisionInput.value = ceoInfo.vision || '';
 
@@ -50,7 +48,6 @@ async function handleCeoUpdate(e) {
     const ceoData = {
       name: formData.get('ceoName'),
       position: formData.get('ceoPosition'),
-      image: formData.get('ceoImage'),
       introduction: formData.get('ceoIntroduction'),
       vision: formData.get('ceoVision')
     };

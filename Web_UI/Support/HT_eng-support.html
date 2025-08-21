@@ -129,36 +129,48 @@
 
   <script defer src="../Components/Header/HT_eng-header.js"></script>
   <script defer src="../Components/Footer/HT_eng-footer.js"></script>
+  <!-- 검색 관련 자바스크립트 파일 연결 -->
+  <script src="../Components/Header/auth-common.js"></script>
   <script>
-    // 로그인 상태 확인
-    function checkAuth() {
-      const token = sessionStorage.getItem('auth_token');
-      if (!token) {
-        alert('로그인이 필요한 페이지입니다.');
-        window.location.href = '/Web_UI/Admin/HT_eng-Admin-Login.html';
-        return;
+    // 기술 지원 페이지는 로그인 없이 접근 가능하도록 설정
+    document.addEventListener('DOMContentLoaded', function () {
+      // 헤더는 로드하되 인증 체크는 하지 않음
+      if (typeof loadHeader === 'function') {
+        loadHeader();
       }
-    }
 
-    // 페이지 로드 시 인증 확인
-    checkAuth();
+      // 기술 지원 폼 제출 처리
+      const supportForm = document.getElementById('supportForm');
+      if (supportForm) {
+        supportForm.addEventListener('submit', function (e) {
+          e.preventDefault();
 
-    // FAQ 토글
-    document.querySelectorAll('.faq-question').forEach(question => {
-      question.addEventListener('click', () => {
-        const answer = question.nextElementSibling;
-        const icon = question.querySelector('i');
+          // 폼 데이터 수집
+          const formData = new FormData(supportForm);
+          const data = Object.fromEntries(formData);
 
-        answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
-        icon.style.transform = answer.style.display === 'block' ? 'rotate(180deg)' : 'rotate(0deg)';
+          // 간단한 유효성 검사
+          if (!data.category || !data.priority || !data.title || !data.description) {
+            alert('필수 항목을 모두 입력해주세요.');
+            return;
+          }
+
+          // 지원 요청 성공 메시지
+          alert('기술 지원 요청이 접수되었습니다.\n빠른 시일 내에 연락드리겠습니다.');
+          supportForm.reset();
+        });
+      }
+
+      // FAQ 토글 기능
+      document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+          const answer = question.nextElementSibling;
+          const icon = question.querySelector('i');
+
+          answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+          icon.style.transform = answer.style.display === 'block' ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
       });
-    });
-
-    // 폼 제출
-    document.getElementById('supportForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('기술지원 요청이 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.');
-      this.reset();
     });
   </script>
 </body>

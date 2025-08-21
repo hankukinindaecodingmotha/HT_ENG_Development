@@ -1,5 +1,13 @@
 // Web_UI/SearchPage1/HT_eng-SearchPage1.js
 
+// 페이지 로드 시 인증 상태 확인
+document.addEventListener('DOMContentLoaded', function () {
+  // 인증 상태 확인 및 유지
+  if (typeof maintainAuthState === 'function') {
+    maintainAuthState();
+  }
+});
+
 // 검색 입력창 요소 선택
 const input = document.getElementById('searchInput');
 
@@ -20,9 +28,8 @@ const recentList = document.getElementById('recentList');
 
 // 사전에 정의된 연관 검색어 배열 (필터링에 사용됨)
 const relatedWords = [
-  "사과즙", "사과파이", "바나나우유", "바나나팬케이크",
-  "오렌지주스", "오렌지향", "포도주", "포도케이크",
-  "망고", "멜론", "수박", "딸기잼"
+  "EOCR", "전기보호", "과전류", "저전류", "결상", "역상", "누설", "지락", "단락", "과전압", "저전압", "전력",
+  "Digital", "Analog", "통신", "Modbus", "4-20mA", "TCP", "ZCT", "3BZ2", "3MZ2", "ISEM2"
 ];
 
 // 최근 검색어 저장 배열 (최대 5개까지 저장)
@@ -31,21 +38,20 @@ let recentSearches = [];
 // 현재 뷰 모드
 let currentViewMode = 'grid-4';
 
-// 필터 상태
+// 필터 상태 - 새로운 CSV 데이터 구조에 맞게 업데이트
 const filters = {
-  AC_DC: '모든 조건',
-  제품군: '모든 조건',
-  보호종류: '모든 조건',
-  통신여부: '모든 조건',
-  통신종류: '모든 조건',
-  '누설(지락)': '모든 조건',
-  단락: '모든 조건',
-  '과전류/저전류': '모든 조건',
-  결상: '모든 조건',
-  역상: '모든 조건',
-  '과전압/저전압': '모든 조건',
-  전력: '모든 조건',
-  '내장 ZCT': '모든 조건'
+  보호종류: '모든조건',
+  제품군: '모든조건',
+  통신여부: '모든조건',
+  통신종류: '모든조건',
+  '내장 ZCT': '모든조건',
+  '과전류/저전류': '모든조건',
+  결상: '모든조건',
+  역상: '모든조건',
+  '누설(지락)': '모든조건',
+  단락: '모든조건',
+  '과전압/저전압': '모든조건',
+  전력: '모든조건'
 };
 
 // 필터 토글
@@ -67,7 +73,7 @@ function toggleFilters() {
   }
 }
 
-// 필터 설정
+// 필터 설정 - 새로운 로직 추가
 function setFilter(key, value) {
   filters[key] = value;
   updateFilterButtons(key, value);
@@ -80,6 +86,40 @@ function setFilter(key, value) {
       disableFilterGroup('통신종류');
     } else if (value === '통신') {
       enableFilterGroup('통신종류');
+      // 통신일 때는 통신종류를 '모든조건'으로 초기화
+      filters['통신종류'] = '모든조건';
+      updateFilterButtons('통신종류', '모든조건');
+    }
+  }
+
+  // 보호종류가 '모든조건'이 아닐 때 관련 보호 기능 필터들 활성화/비활성화
+  if (key === '보호종류') {
+    if (value === '전류') {
+      // 전류 보호만 활성화
+      enableFilterGroup('과전류/저전류');
+      disableFilterGroup('결상');
+      disableFilterGroup('역상');
+      disableFilterGroup('누설(지락)');
+      disableFilterGroup('단락');
+      disableFilterGroup('과전압/저전압');
+      disableFilterGroup('전력');
+
+      // 관련 필터 값 초기화
+      filters['결상'] = '불가';
+      filters['역상'] = '불가';
+      filters['누설(지락)'] = '불가';
+      filters['단락'] = '불가';
+      filters['과전압/저전압'] = '불가';
+      filters['전력'] = '불가';
+    } else if (value === '모든조건') {
+      // 모든 보호 기능 활성화
+      enableFilterGroup('과전류/저전류');
+      enableFilterGroup('결상');
+      enableFilterGroup('역상');
+      enableFilterGroup('누설(지락)');
+      enableFilterGroup('단락');
+      enableFilterGroup('과전압/저전압');
+      enableFilterGroup('전력');
     }
   }
 
@@ -124,45 +164,48 @@ function enableFilterGroup(filterKey) {
   }
 }
 
-// 필터 초기화
+// 필터 리셋
 function resetFilters() {
   Object.keys(filters).forEach(key => {
-    filters[key] = '모든 조건';
-    updateFilterButtons(key, '모든 조건');
+    filters[key] = '모든조건';
+  });
+
+  // 모든 필터 버튼을 '모든조건' 상태로 초기화
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent === '모든조건') {
+      btn.classList.add('active');
+    }
   });
 
   // 모든 필터 그룹 활성화
-  enableFilterGroup('통신종류');
+  enableAllFilterGroups();
 
-  // 검색어 없이 필터 초기화만 했으면 결과를 리셋
-  const resultGrid = document.getElementById('serverResultGrid');
-  const resultContainer = document.getElementById('serverResultContainer');
-  resultGrid.innerHTML = '';
-  resultContainer.classList.remove('show');
+  // 검색 실행
+  performSearch();
 }
 
-// 활성 필터 존재 여부 확인
-function hasActiveFilters() {
-  return Object.keys(filters).some(key => filters[key] && filters[key] !== '모든 조건');
+// 모든 필터 그룹 활성화
+function enableAllFilterGroups() {
+  const filterGroups = document.querySelectorAll('.filter-group');
+  filterGroups.forEach(group => {
+    group.classList.remove('disabled');
+    const buttons = group.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+      btn.disabled = false;
+    });
+  });
 }
 
-// 서버 검색 함수 (필터 적용)
+// 검색 실행 함수
 function performSearch() {
   const query = input.value.trim();
-
-  // 키워드도 없고 활성 필터도 없으면 경고
-  if (!query && !hasActiveFilters()) {
-    alert('검색어를 입력하거나 필터를 선택해주세요.');
-    return;
-  }
-
-  // 키워드가 있으면 최근 검색어에 추가
   if (query) updateRecentSearches(query);
 
   const params = new URLSearchParams();
   if (query) params.append('제품명', query);
   Object.keys(filters).forEach(key => {
-    if (filters[key] && filters[key] !== '모든 조건') {
+    if (filters[key] && filters[key] !== '모든조건') {
       params.append(key, filters[key]);
     }
   });
@@ -215,35 +258,94 @@ function displayServerResults(data) {
     descDiv.className = 'product-description';
     descDiv.textContent = item.상세설명;
 
+    // 제품 상세 정보 추가
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'product-details';
+
+    // 보호종류
+    if (item.보호종류 && item.보호종류 !== '모든조건') {
+      const protectionType = document.createElement('span');
+      protectionType.className = 'detail-tag protection';
+      protectionType.textContent = item.보호종류;
+      detailsDiv.appendChild(protectionType);
+    }
+
+    // 제품군
+    if (item.제품군 && item.제품군 !== '모든조건') {
+      const productGroup = document.createElement('span');
+      productGroup.className = 'detail-tag group';
+      productGroup.textContent = item.제품군;
+      detailsDiv.appendChild(productGroup);
+    }
+
+    // 통신여부
+    if (item.통신여부 && item.통신여부 !== '모든조건') {
+      const communication = document.createElement('span');
+      communication.className = 'detail-tag communication';
+      communication.textContent = item.통신여부;
+      detailsDiv.appendChild(communication);
+    }
+
+    // ZCT 내장 여부
+    if (item['내장 ZCT'] && item['내장 ZCT'] !== '모든조건') {
+      const zct = document.createElement('span');
+      zct.className = 'detail-tag zct';
+      zct.textContent = item['내장 ZCT'] === 'O' ? 'ZCT 내장' : 'ZCT 미내장';
+      detailsDiv.appendChild(zct);
+    }
+
     // 액션 버튼 영역 생성
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'product-actions';
 
-    // PDF 다운로드 버튼
-    const pdfBtn = document.createElement('a');
-    pdfBtn.className = 'action-btn';
-    pdfBtn.href = '#';
-    pdfBtn.onclick = (e) => {
-      e.preventDefault();
-      downloadPDF(item.제품);
-    };
-    pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> PDF';
+    // 구매 링크 버튼 (있는 경우에만)
+    if (item.구매LINK && item.구매LINK !== 'X' && item.구매LINK.trim() !== '') {
+      const purchaseBtn = document.createElement('a');
+      purchaseBtn.className = 'action-btn purchase';
+      purchaseBtn.href = item.구매LINK;
+      purchaseBtn.target = '_blank';
+      purchaseBtn.rel = 'noopener noreferrer';
+      purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> 구매';
+      // 클릭 이벤트 전파 방지 (카드 클릭과 분리)
+      purchaseBtn.onclick = (e) => {
+        e.stopPropagation();
+        window.open(item.구매LINK, '_blank');
+      };
+      actionsDiv.appendChild(purchaseBtn);
+    }
 
-    // 브랜드 사이트 버튼
-    const brandBtn = document.createElement('a');
-    brandBtn.className = 'action-btn';
-    brandBtn.href = '#';
-    brandBtn.onclick = (e) => {
-      e.preventDefault();
-      openBrandSite(item.제품);
-    };
-    brandBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> 브랜드';
+    // 카탈로그 다운로드 버튼 (있는 경우에만)
+    if (item['catalog down'] && item['catalog down'] !== 'X' && item['catalog down'].trim() !== '') {
+      const catalogBtn = document.createElement('a');
+      catalogBtn.className = 'action-btn catalog';
+      catalogBtn.href = item['catalog down'];
+      catalogBtn.target = '_blank';
+      catalogBtn.rel = 'noopener noreferrer';
+      catalogBtn.innerHTML = '<i class="fas fa-file-pdf"></i> 카탈로그';
+      // 클릭 이벤트 전파 방지 (카드 클릭과 분리)
+      catalogBtn.onclick = (e) => {
+        e.stopPropagation();
+        window.open(item['catalog down'], '_blank');
+      };
+      actionsDiv.appendChild(catalogBtn);
+    }
 
-    actionsDiv.appendChild(pdfBtn);
-    actionsDiv.appendChild(brandBtn);
+    // 구매 링크와 카탈로그 링크가 모두 없는 경우에만 연락처 버튼 표시
+    if ((!item.구매LINK || item.구매LINK === 'X' || item.구매LINK.trim() === '') &&
+      (!item['catalog down'] || item['catalog down'] === 'X' || item['catalog down'].trim() === '')) {
+      const contactBtn = document.createElement('button');
+      contactBtn.className = 'action-btn contact';
+      contactBtn.innerHTML = '<i class="fas fa-phone"></i> 연락처';
+      contactBtn.onclick = (e) => {
+        e.stopPropagation();
+        showContactModal();
+      };
+      actionsDiv.appendChild(contactBtn);
+    }
 
     infoDiv.appendChild(nameDiv);
     infoDiv.appendChild(descDiv);
+    infoDiv.appendChild(detailsDiv);
     infoDiv.appendChild(actionsDiv);
 
     card.appendChild(imageDiv);
@@ -256,20 +358,6 @@ function displayServerResults(data) {
 }
 
 
-
-// PDF 다운로드 함수
-function downloadPDF(productName) {
-  // 실제 PDF 파일 경로나 API 엔드포인트로 대체 가능
-  alert(`${productName}의 PDF를 다운로드합니다.`);
-  // 예시: window.open(`/api/products/${productName}/pdf`);
-}
-
-// 브랜드 사이트 열기 함수
-function openBrandSite(productName) {
-  // 실제 브랜드 사이트 URL로 대체 가능
-  alert(`${productName}의 브랜드 사이트를 엽니다.`);
-  // 예시: window.open('https://brand-site.com', '_blank');
-}
 
 // 제품 모달 표시
 function showProductModal(item) {
@@ -356,6 +444,63 @@ function showProductModal(item) {
   // 모달 표시
   modal.style.display = 'block';
 
+  // 모달 액션 버튼 설정
+  const modalCatalogBtn = document.getElementById('modalCatalogBtn');
+  const modalPurchaseBtn = document.getElementById('modalPurchaseBtn');
+
+  // 구매 링크와 카탈로그 링크가 모두 없는 경우에만 연락처 버튼 표시
+  const hasPurchaseLink = item.구매LINK && item.구매LINK !== 'X' && item.구매LINK.trim() !== '';
+  const hasCatalogLink = item['catalog down'] && item['catalog down'] !== 'X' && item['catalog down'].trim() !== '';
+
+  if (hasPurchaseLink && hasCatalogLink) {
+    // 둘 다 있는 경우: 구매와 카탈로그 버튼 모두 표시
+    modalPurchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> 구매';
+    modalPurchaseBtn.className = 'modal-action-btn purchase';
+    modalPurchaseBtn.style.display = 'inline-flex';
+    modalPurchaseBtn.onclick = (e) => {
+      e.preventDefault();
+      window.open(item.구매LINK, '_blank');
+    };
+
+    modalCatalogBtn.innerHTML = '<i class="fas fa-file-pdf"></i> 카탈로그';
+    modalCatalogBtn.className = 'modal-action-btn catalog';
+    modalCatalogBtn.style.display = 'inline-flex';
+    modalCatalogBtn.onclick = (e) => {
+      e.preventDefault();
+      window.open(item['catalog down'], '_blank');
+    };
+  } else if (hasPurchaseLink) {
+    // 구매 링크만 있는 경우: 구매 버튼만 표시
+    modalPurchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> 구매';
+    modalPurchaseBtn.className = 'modal-action-btn purchase';
+    modalPurchaseBtn.style.display = 'inline-flex';
+    modalPurchaseBtn.onclick = (e) => {
+      e.preventDefault();
+      window.open(item.구매LINK, '_blank');
+    };
+    modalCatalogBtn.style.display = 'none';
+  } else if (hasCatalogLink) {
+    // 카탈로그 링크만 있는 경우: 카탈로그 버튼만 표시
+    modalCatalogBtn.innerHTML = '<i class="fas fa-file-pdf"></i> 카탈로그';
+    modalCatalogBtn.className = 'modal-action-btn catalog';
+    modalCatalogBtn.style.display = 'inline-flex';
+    modalCatalogBtn.onclick = (e) => {
+      e.preventDefault();
+      window.open(item['catalog down'], '_blank');
+    };
+    modalPurchaseBtn.style.display = 'none';
+  } else {
+    // 둘 다 없는 경우: 연락처 버튼만 표시
+    modalPurchaseBtn.innerHTML = '<i class="fas fa-phone"></i> 연락처';
+    modalPurchaseBtn.className = 'modal-action-btn contact';
+    modalPurchaseBtn.style.display = 'inline-flex';
+    modalPurchaseBtn.onclick = (e) => {
+      e.preventDefault();
+      showContactModal();
+    };
+    modalCatalogBtn.style.display = 'none';
+  }
+
   // ESC 키로 모달 닫기
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
@@ -380,13 +525,15 @@ function closeProductModal() {
 // 모달에서 PDF 다운로드
 function downloadPDFFromModal() {
   const productName = document.getElementById('modalTitle').textContent;
-  downloadPDF(productName);
+  // PDF 다운로드 함수 (사용하지 않음 - 제거)
+  // alert(`${productName}의 PDF를 다운로드합니다.`);
 }
 
 // 모달에서 브랜드 사이트 열기
 function openBrandSiteFromModal() {
   const productName = document.getElementById('modalTitle').textContent;
-  openBrandSite(productName);
+  // 브랜드 사이트 열기 함수 (사용하지 않음 - 제거)
+  // alert(`${productName}의 브랜드 사이트를 엽니다.`);
 }
 
 // 뷰 모드 설정
@@ -550,3 +697,29 @@ document.getElementById('homeBtn').addEventListener('click', () => {
   // SearchPage1 폴더 기준
   window.location.href = '../HomePage/HT-eng-HomePage.html';
 });
+
+// 연락처 모달 표시
+function showContactModal() {
+  const modal = document.getElementById('contactModal');
+  modal.style.display = 'block';
+
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeContactModal();
+    }
+  });
+
+  // 모달 외부 클릭 시 닫기
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      closeContactModal();
+    }
+  });
+}
+
+// 연락처 모달 닫기
+function closeContactModal() {
+  const modal = document.getElementById('contactModal');
+  modal.style.display = 'none';
+}

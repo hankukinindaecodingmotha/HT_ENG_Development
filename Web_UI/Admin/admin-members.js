@@ -70,7 +70,6 @@ async function handleMembersUpdate(e) {
         department: formData.get(`memberDepartment_${index}`),
         experience: formData.get(`memberExperience_${index}`),
         email: formData.get(`memberEmail_${index}`),
-        image: formData.get(`memberImage_${index}`),
         description: formData.get(`memberDescription_${index}`)
       };
       if (member.name && member.position && member.description) {
@@ -107,7 +106,7 @@ async function handleMembersUpdate(e) {
 }
 
 // 구성원 관련 함수들
-function addMember() {
+function addNewMember() {
   const membersList = document.getElementById('membersList');
   const memberCount = membersList.querySelectorAll('.member-item').length;
   const newIndex = memberCount;
@@ -118,7 +117,6 @@ function addMember() {
     department: '',
     experience: '',
     email: '',
-    image: '',
     description: ''
   };
 
@@ -160,10 +158,6 @@ function addMemberToForm(member, index) {
         <div class="form-group">
           <label>이메일</label>
           <input type="email" name="memberEmail_${index}" value="${member.email || ''}">
-        </div>
-        <div class="form-group">
-          <label>이미지</label>
-          <input type="text" name="memberImage_${index}" value="${member.image || ''}" placeholder="member1.jpg">
         </div>
       </div>
       <div class="form-group">
