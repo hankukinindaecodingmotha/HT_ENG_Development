@@ -151,11 +151,5 @@ refactor: 코드 리팩토링
 test: 테스트 코드 추가
 chore: 빌드 프로세스 변경
 ```
-
-## 📞 문의
-- **개발팀**: dev@hteng.com
-- **기술지원**: support@hteng.com
-- **프로젝트 관리**: pm@hteng.com
-
 ## 📄 라이선스
 이 프로젝트는 HTeng의 내부 프로젝트입니다.
